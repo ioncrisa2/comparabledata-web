@@ -1,0 +1,7 @@
+.skip-link {
+  display: none !important;
+}
+
+.ui-skeleton::after {
+  display: none !important;
+}

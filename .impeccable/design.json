@@ -1,0 +1,217 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-26T00:00:00+07:00",
+  "title": "Design System: HJAR Sysinfo Web",
+  "extensions": {
+    "colorMeta": {
+      "brand-amber": {
+        "role": "primary",
+        "displayName": "Amber Operasional",
+        "canonical": "#F59E0B",
+        "tonalRamp": ["#451A03", "#78350F", "#B45309", "#D97706", "#F59E0B", "#FBBF24", "#FDE68A", "#FFFBEB"]
+      },
+      "brand-amber-strong": {
+        "role": "primary",
+        "displayName": "Amber Dalam",
+        "canonical": "#D97706",
+        "tonalRamp": ["#451A03", "#78350F", "#92400E", "#B45309", "#D97706", "#F59E0B", "#FDE68A", "#FFFBEB"]
+      },
+      "brand-amber-soft": {
+        "role": "primary",
+        "displayName": "Amber Kabut",
+        "canonical": "#FFFBEB",
+        "tonalRamp": ["#451A03", "#78350F", "#B45309", "#D97706", "#F59E0B", "#FCD34D", "#FEF3C7", "#FFFBEB"]
+      },
+      "action-primary": {
+        "role": "primary",
+        "displayName": "Amber Tindakan",
+        "canonical": "#B45309",
+        "tonalRamp": ["#451A03", "#78350F", "#92400E", "#B45309", "#D97706", "#F59E0B", "#FDE68A", "#FFFBEB"]
+      },
+      "ink-strong": {
+        "role": "neutral",
+        "displayName": "Slate Inti",
+        "canonical": "#0F172A",
+        "tonalRamp": ["#020617", "#0F172A", "#1E293B", "#334155", "#475569", "#94A3B8", "#E2E8F0", "#F8FAFC"]
+      },
+      "ink-body": {
+        "role": "neutral",
+        "displayName": "Slate Isi",
+        "canonical": "#334155",
+        "tonalRamp": ["#020617", "#0F172A", "#1E293B", "#334155", "#475569", "#64748B", "#CBD5E1", "#F1F5F9"]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Slate Redam",
+        "canonical": "#64748B",
+        "tonalRamp": ["#0F172A", "#1E293B", "#334155", "#475569", "#64748B", "#94A3B8", "#CBD5E1", "#F8FAFC"]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Kanvas Kerja",
+        "canonical": "#F8FAFC",
+        "tonalRamp": ["#0F172A", "#1E293B", "#334155", "#64748B", "#CBD5E1", "#E2E8F0", "#F1F5F9", "#F8FAFC"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Permukaan Utama",
+        "canonical": "#FFFFFF",
+        "tonalRamp": ["#111827", "#374151", "#6B7280", "#9CA3AF", "#D1D5DB", "#E5E7EB", "#F9FAFB", "#FFFFFF"]
+      },
+      "surface-inset": {
+        "role": "neutral",
+        "displayName": "Permukaan Cekung",
+        "canonical": "#F1F5F9",
+        "tonalRamp": ["#0F172A", "#1E293B", "#334155", "#64748B", "#94A3B8", "#CBD5E1", "#E2E8F0", "#F1F5F9"]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Batas Tegas",
+        "canonical": "#CBD5E1",
+        "tonalRamp": ["#0F172A", "#1E293B", "#334155", "#64748B", "#94A3B8", "#CBD5E1", "#E2E8F0", "#F8FAFC"]
+      },
+      "border-soft": {
+        "role": "neutral",
+        "displayName": "Batas Halus",
+        "canonical": "#E2E8F0",
+        "tonalRamp": ["#0F172A", "#1E293B", "#475569", "#64748B", "#94A3B8", "#CBD5E1", "#E2E8F0", "#F8FAFC"]
+      },
+      "info": {
+        "role": "secondary",
+        "displayName": "Biru Informasi",
+        "canonical": "#1D4ED8",
+        "tonalRamp": ["#172554", "#1E3A8A", "#1E40AF", "#1D4ED8", "#2563EB", "#60A5FA", "#BFDBFE", "#EFF6FF"]
+      },
+      "success": {
+        "role": "secondary",
+        "displayName": "Hijau Valid",
+        "canonical": "#15803D",
+        "tonalRamp": ["#052E16", "#14532D", "#166534", "#15803D", "#16A34A", "#4ADE80", "#BBF7D0", "#F0FDF4"]
+      },
+      "warning-text": {
+        "role": "primary",
+        "displayName": "Amber Teks Peringatan",
+        "canonical": "#92400E",
+        "tonalRamp": ["#451A03", "#78350F", "#92400E", "#B45309", "#D97706", "#F59E0B", "#FDE68A", "#FFFBEB"]
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Merah Bahaya",
+        "canonical": "#DC2626",
+        "tonalRamp": ["#450A0A", "#7F1D1D", "#991B1B", "#DC2626", "#EF4444", "#FCA5A5", "#FEE2E2", "#FEF2F2"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Auth headings dan empty state besar." },
+      "headline": { "displayName": "Page Headline", "purpose": "Judul halaman aplikasi." },
+      "title": { "displayName": "Section Title", "purpose": "Panel, dialog, dan section." },
+      "body": { "displayName": "Body", "purpose": "Teks dan kontrol utama." },
+      "label": { "displayName": "Label", "purpose": "Form label, metadata, dan compact UI." }
+    },
+    "shadows": [
+      { "name": "surface-rest", "value": "0 1px 0 rgba(15,23,42,.04), 0 6px 8px rgba(15,23,42,.05)", "purpose": "Pemisahan halus pada surface penting." },
+      { "name": "overlay", "value": "0 12px 24px rgba(15,23,42,.14)", "purpose": "Dropdown, popover, dan dialog." },
+      { "name": "focus-ring", "value": "0 0 0 3px rgba(245,158,11,.28)", "purpose": "Focus-visible pada kontrol interaktif." }
+    ],
+    "motion": [
+      { "name": "state-fast", "value": "150ms cubic-bezier(.25,1,.5,1)", "purpose": "Hover, focus, dropdown kecil." },
+      { "name": "state-standard", "value": "220ms cubic-bezier(.25,1,.5,1)", "purpose": "Drawer, panel, dan perubahan state yang lebih besar." },
+      { "name": "reduced", "value": "1ms linear", "purpose": "Fallback saat prefers-reduced-motion aktif." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Aksi utama tunggal dalam satu action group.",
+      "html": "<button class=\"ds-btn-primary\">Simpan perubahan</button>",
+      "css": ".ds-btn-primary{height:40px;padding:0 16px;border:0;border-radius:10px;background:#B45309;color:#fff;font:600 14px/1.4 Instrument Sans,ui-sans-serif,system-ui,sans-serif;transition:background 150ms cubic-bezier(.25,1,.5,1)}.ds-btn-primary:hover{background:#92400E}.ds-btn-primary:focus-visible{outline:2px solid #B45309;outline-offset:2px}.ds-btn-primary:active{background:#78350F}.ds-btn-primary:disabled{opacity:.55;cursor:not-allowed}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Aksi sekunder yang tetap terlihat namun tidak mendominasi.",
+      "html": "<button class=\"ds-btn-secondary\">Batal</button>",
+      "css": ".ds-btn-secondary{height:40px;padding:0 16px;border:1px solid #CBD5E1;border-radius:10px;background:#fff;color:#334155;font:600 14px/1.4 Instrument Sans,ui-sans-serif,system-ui,sans-serif;transition:background 150ms cubic-bezier(.25,1,.5,1),border-color 150ms cubic-bezier(.25,1,.5,1)}.ds-btn-secondary:hover{background:#F8FAFC;border-color:#94A3B8}.ds-btn-secondary:focus-visible{outline:2px solid #B45309;outline-offset:2px}.ds-btn-secondary:active{background:#F1F5F9}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Field berlabel dengan kontras dan focus state yang konsisten.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Alamat properti</span><input class=\"ds-input\" placeholder=\"Masukkan alamat lengkap\"></label>",
+      "css": ".ds-field{display:grid;gap:6px;color:#334155;font-family:Instrument Sans,ui-sans-serif,system-ui,sans-serif}.ds-field-label{font-size:12px;font-weight:600}.ds-input{height:40px;padding:0 12px;border:1px solid #CBD5E1;border-radius:10px;background:#fff;color:#0F172A;font-family:inherit;font-size:14px;font-weight:400;line-height:1.5}.ds-input::placeholder{color:#64748B}.ds-input:hover{border-color:#F59E0B}.ds-input:focus-visible{outline:2px solid #B45309;outline-offset:2px;border-color:#B45309}.ds-input:disabled{background:#F1F5F9;color:#64748B;cursor:not-allowed}"
+    },
+    {
+      "name": "Active Filter Chip",
+      "kind": "chip",
+      "description": "Filter URL yang sedang aktif dan dapat dihapus.",
+      "html": "<button class=\"ds-filter-chip\">Provinsi: Aceh <span aria-hidden=\"true\">×</span></button>",
+      "css": ".ds-filter-chip{min-height:32px;padding:4px 10px;border:1px solid #FDE68A;border-radius:999px;background:#FFFBEB;color:#92400E;font:600 12px/1.4 Instrument Sans,ui-sans-serif,system-ui,sans-serif}.ds-filter-chip:hover{background:#FEF3C7}.ds-filter-chip:focus-visible{outline:2px solid #B45309;outline-offset:2px}.ds-filter-chip:active{background:#FDE68A}"
+    },
+    {
+      "name": "Application Navigation",
+      "kind": "nav",
+      "description": "Navigasi shell slate dengan active state amber.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Navigasi aplikasi\"><a class=\"ds-nav-item ds-nav-item-active\" href=\"#\">Bank Data</a><a class=\"ds-nav-item\" href=\"#\">Master Data</a></nav>",
+      "css": ".ds-nav{display:grid;gap:4px;width:220px;padding:12px;background:#0F172A;font-family:Instrument Sans,ui-sans-serif,system-ui,sans-serif}.ds-nav-item{min-height:44px;display:flex;align-items:center;padding:0 12px;border-radius:10px;color:#CBD5E1;text-decoration:none;font-size:14px;font-weight:600}.ds-nav-item:hover{background:#1E293B;color:#fff}.ds-nav-item:focus-visible{outline:2px solid #F59E0B;outline-offset:2px}.ds-nav-item-active{background:rgba(245,158,11,.12);color:#FBBF24}"
+    },
+    {
+      "name": "Operational Surface",
+      "kind": "card",
+      "refersTo": "surface-default",
+      "description": "Permukaan untuk form, tabel, atau ringkasan yang mempunyai konteks mandiri.",
+      "html": "<section class=\"ds-surface\"><h2>Ringkasan data</h2><p>Konten operasional ditempatkan langsung tanpa card bersarang.</p></section>",
+      "css": ".ds-surface{padding:16px;border:1px solid #E2E8F0;border-radius:14px;background:#fff;color:#334155;font:400 14px/1.5 Instrument Sans,ui-sans-serif,system-ui,sans-serif}.ds-surface h2{margin:0 0 8px;color:#0F172A;font-size:16px;line-height:1.4}.ds-surface p{margin:0;max-width:70ch}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Meja Operasional Properti",
+    "overview": "HJAR Sysinfo adalah meja kerja digital untuk pengguna yang memeriksa, membandingkan, dan menjaga kualitas data properti sepanjang hari. Antarmuka harus terasa presisi, terang, tenang, dan dapat dipercaya seperti perangkat kerja profesional: informasi padat tetap mudah dipindai, tindakan utama terlihat jelas, dan status sistem tidak pernah ambigu.\n\nSistem mempertahankan karakter visual aplikasi saat ini: shell slate gelap, kanvas terang, serta amber sebagai penanda tindakan dan perhatian. Amber bukan dekorasi. Warna ini digunakan secara hemat untuk aksi utama, fokus, pilihan aktif, dan status yang memang memerlukan perhatian. Dark mode tidak menjadi target fase pertama karena pengguna utama bekerja dengan tabel, formulir, peta, dan dokumen pada lingkungan kantor bercahaya.\n\nAntarmuka menolak glassmorphism, gradient dekoratif, bayangan berat, card bersarang, animasi teatrikal, dan kontrol yang mengorbankan familiaritas demi gaya. Konsistensi, aksesibilitas, serta kecepatan pemindaian lebih penting daripada kejutan visual.",
+    "keyCharacteristics": [
+      "Restrained, light-first, dan berorientasi tugas.",
+      "Slate membentuk struktur; amber menandai aksi dan perhatian.",
+      "Tipografi tunggal, rapat, tetapi tetap terbaca.",
+      "Permukaan datar dengan elevasi hanya pada batas konteks yang nyata.",
+      "Desktop efisien, mobile tetap lengkap tanpa menyembunyikan aksi kritis.",
+      "Semua status loading, empty, error, success, disabled, dan forbidden dirancang eksplisit."
+    ],
+    "rules": [
+      { "name": "The Amber Budget Rule", "body": "Amber jenuh tidak boleh mengisi lebih dari sekitar 10% sebuah layar. Jika dua aksi sama-sama berwarna amber, prioritas aksi belum diselesaikan.", "section": "colors" },
+      { "name": "The Semantic Color Rule", "body": "Success, warning, danger, dan info hanya menandai makna status yang sesuai. Warna tidak boleh menjadi satu-satunya pembeda; selalu sertakan teks, ikon, atau bentuk.", "section": "colors" },
+      { "name": "The Contrast Rule", "body": "Body text dan placeholder wajib mencapai kontras 4.5:1. Teks putih dilarang di atas brand-amber; gunakan action-primary untuk tombol bertulisan putih.", "section": "colors" },
+      { "name": "The Fixed Product Scale Rule", "body": "Ukuran tipografi aplikasi menggunakan skala tetap, bukan heading fluid clamp(). Responsiveness ditangani oleh struktur layout, bukan mengecilkan judul secara kontinu.", "section": "typography" },
+      { "name": "The Sentence Case Rule", "body": "Uppercase hanya untuk kode, singkatan resmi, atau label status yang sangat pendek. Navigation group tidak boleh mengandalkan tracked uppercase kecil sebagai dekorasi berulang.", "section": "typography" },
+      { "name": "The Flat-by-Default Rule", "body": "Tabel, toolbar, filter, dan form tidak mendapat shadow hanya karena dibungkus container. Gunakan background atau divider lebih dahulu.", "section": "elevation" },
+      { "name": "The One Boundary Rule", "body": "Sebuah surface tidak boleh memakai border halus dan shadow lebar sekaligus sebagai dekorasi. Pilih boundary yang paling menjelaskan hierarki.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do simpan filter, sort, tab, dan pagination shareable di URL.",
+      "Do desain loading, empty, error, stale, forbidden, offline, dan retry state untuk setiap permintaan data.",
+      "Do gunakan satu vocabulary komponen untuk semua modul: button, field, dialog, table, feedback, dan pagination harus memiliki state yang sama.",
+      "Do gunakan target sentuh minimum 44px pada perangkat coarse pointer dan focus-visible pada seluruh kontrol keyboard.",
+      "Do pertahankan body text maksimal 65–75 karakter per baris dan gunakan tabular-nums untuk data angka.",
+      "Do gunakan transisi 150–250ms hanya untuk menyampaikan perubahan state dan hormati prefers-reduced-motion.",
+      "Do self-host Instrument Sans atau hapus deklarasinya dan gunakan system stack secara konsisten; jangan mengandalkan nama font yang tidak pernah dimuat."
+    ],
+    "donts": [
+      "Don't gunakan gradient text, glassmorphism, decorative grid background, atau repeating diagonal stripes.",
+      "Don't memakai colored side-stripe lebih dari 1px pada alert, card, atau list item.",
+      "Don't membuat card di dalam card.",
+      "Don't memasangkan border 1px dengan shadow lembut ber-blur 16px atau lebih sebagai dekorasi surface biasa.",
+      "Don't memakai radius 24–40px pada card, section, input, atau dialog.",
+      "Don't memberi animasi entrance berurutan pada page load; pengguna harus langsung masuk ke tugas.",
+      "Don't menggunakan modal sebagai solusi pertama untuk filter, edit ringan, atau informasi tambahan.",
+      "Don't menyembunyikan aksi tanpa menjaga authorization di API; UI permission hanya meningkatkan UX, bukan batas keamanan.",
+      "Don't menaruh response API ke Pinia hanya untuk membuatnya global; server state mempunyai cache dan lifecycle sendiri."
+    ]
+  }
+}
