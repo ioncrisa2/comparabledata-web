@@ -32,6 +32,29 @@ const router = createRouter({
       },
     },
     {
+      path: '/pembandings',
+      name: 'pembanding.list',
+      component: () => import('@/features/pembanding/pages/PembandingListPage.vue'),
+      meta: {
+        title: 'Data pembanding',
+        layout: 'app',
+        requiresAuth: true,
+        permissions: ['view_any_data::pembanding'],
+        breadcrumb: 'Data pembanding',
+      },
+    },
+    {
+      path: '/pembandings/:id',
+      name: 'pembanding.detail',
+      component: () => import('@/features/pembanding/pages/PembandingDetailPage.vue'),
+      meta: {
+        title: 'Detail pembanding',
+        layout: 'app',
+        requiresAuth: true,
+        breadcrumb: 'Detail pembanding',
+      },
+    },
+    {
       path: '/__foundation',
       name: 'foundation',
       component: () => import('@/features/foundation/pages/FoundationPage.vue'),

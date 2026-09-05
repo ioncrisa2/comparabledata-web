@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { useAuthStore } from '@/features/auth'
 import { isApiError } from '@/shared/api/error'
@@ -8,6 +8,7 @@ import UiButton from '@/shared/components/ui/UiButton.vue'
 import UiInlineAlert from '@/shared/components/ui/UiInlineAlert.vue'
 
 const auth = useAuthStore()
+const route = useRoute()
 const router = useRouter()
 const loggingOut = ref(false)
 const logoutError = ref('')
@@ -36,6 +37,19 @@ async function handleLogout() {
         <span class="app-layout__mark" aria-hidden="true">HJ</span>
         <span>HJAR Sysinfo</span>
       </RouterLink>
+
+      <nav class="app-layout__navigation" aria-label="Navigasi utama">
+        <RouterLink :to="{ name: 'dashboard' }">
+          <i class="pi pi-home" aria-hidden="true" /> Dashboard
+        </RouterLink>
+        <RouterLink
+          v-if="auth.can('view_any_data::pembanding')"
+          :to="{ name: 'pembanding.list' }"
+          :class="{ 'app-layout__nav-active': String(route.name).startsWith('pembanding.') }"
+        >
+          <i class="pi pi-database" aria-hidden="true" /> Data pembanding
+        </RouterLink>
+      </nav>
 
       <div class="app-layout__account">
         <span class="app-layout__identity">
@@ -100,9 +114,38 @@ async function handleLogout() {
 }
 
 .app-layout__account,
-.app-layout__identity {
+.app-layout__identity,
+.app-layout__navigation,
+.app-layout__navigation a {
   display: flex;
   align-items: center;
+}
+
+.app-layout__navigation {
+  align-self: stretch;
+  gap: 4px;
+}
+
+.app-layout__navigation a {
+  min-height: 40px;
+  gap: 8px;
+  border-radius: var(--radius-control);
+  color: var(--color-ink-body);
+  padding-inline: 12px;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.app-layout__navigation a:hover {
+  background: var(--color-surface-inset);
+  color: var(--color-ink-strong);
+}
+
+.app-layout__navigation a.router-link-exact-active,
+.app-layout__navigation a.app-layout__nav-active {
+  background: var(--color-brand-amber-soft);
+  color: var(--color-warning-text);
 }
 
 .app-layout__account {
@@ -130,6 +173,18 @@ async function handleLogout() {
 }
 
 @media (max-width: 639px) {
+  .app-layout__topbar {
+    flex-wrap: wrap;
+  }
+
+  .app-layout__navigation {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    border-top: 1px solid var(--color-border-soft);
+    padding-top: 8px;
+  }
+
   .app-layout__identity {
     display: none;
   }
