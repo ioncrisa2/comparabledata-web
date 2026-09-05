@@ -10,6 +10,7 @@
     "lint:fix": "eslint . --cache --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "api:probe": "node scripts/check-api-readiness.mjs",
     "api:generate": "node scripts/generate-api.mjs",
     "api:check": "node scripts/check-generated-api.mjs",
     "test": "vitest run",

@@ -4,6 +4,8 @@ node_modules
 playwright-report
 test-results
 package-lock.json
+public/mockServiceWorker.js
+src/shared/api/generated
 .impeccable/design.json
 .vscode
 DESIGN.md

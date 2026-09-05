@@ -6,7 +6,7 @@ import { env } from '@/shared/config/env'
 const foundations = [
   {
     title: 'Kontrak API',
-    detail: 'Client OpenAPI tunggal dengan session cookie dan normalisasi error.',
+    detail: 'Client OpenAPI tunggal dengan session cookie, recovery CSRF, dan normalisasi error.',
     icon: 'pi pi-cloud',
   },
   {
@@ -79,13 +79,13 @@ const foundations = [
 
       <UiSurface class="foundation__next" inset>
         <div>
-          <h2>Langkah integrasi berikutnya</h2>
+          <h2>Integrasi autentikasi tersedia</h2>
           <p>
-            Implementasikan session web setelah endpoint autentikasi versioned siap, kemudian
-            dictionary dan lokasi sebagai data referensi pertama.
+            Login, pemulihan sesi, permission, dan logout sudah memakai endpoint versioned. Tahap
+            berikutnya adalah dictionary dan lokasi sebagai data referensi pertama.
           </p>
         </div>
-        <UiStatusBadge tone="warning" icon="pi pi-clock">Menunggu API READY</UiStatusBadge>
+        <UiStatusBadge tone="success" icon="pi pi-check-circle">Auth terintegrasi</UiStatusBadge>
       </UiSurface>
     </section>
   </main>

@@ -195,21 +195,21 @@ Tujuan: private SPA shell aman dan siap menjadi host seluruh feature.
 - [ ] `FE-0401` Implementasikan canonical route tree dan named route constants.
 - [ ] `FE-0402` Type route meta: title, layout, auth, permissions, breadcrumb.
 - [ ] `FE-0403` Implementasikan route lazy loading per feature.
-- [ ] `FE-0404` Implementasikan global auth/permission guard tanpa infinite redirect.
+- [x] `FE-0404` Implementasikan global auth/permission guard tanpa infinite redirect.
 - [ ] `FE-0405` Implementasikan 403, 404, maintenance, dan unexpected-error routes.
 - [ ] `FE-0406` Implementasikan scroll behavior dan route focus/announcement.
-- [ ] `FE-0407` Implementasikan safe `redirect` query setelah login.
+- [x] `FE-0407` Implementasikan safe `redirect` query setelah login.
 - [ ] `FE-0408` Tambahkan router tests untuk deep link, redirect, auth, permission, dan back/forward.
 
 ### Auth
 
-- [ ] `AUTH-0410` Implementasikan `useAuthStore` tanpa token persistence.
-- [ ] `AUTH-0411` Implementasikan CSRF initialization.
-- [ ] `AUTH-0412` Implementasikan login session cookie.
-- [ ] `AUTH-0413` Implementasikan current-session bootstrap.
-- [ ] `AUTH-0414` Implementasikan logout dan query cache clearing.
-- [ ] `AUTH-0415` Implementasikan 401 global handling.
-- [ ] `AUTH-0416` Implementasikan bounded 419 CSRF recovery.
+- [x] `AUTH-0410` Implementasikan `useAuthStore` tanpa token persistence.
+- [x] `AUTH-0411` Implementasikan CSRF initialization.
+- [x] `AUTH-0412` Implementasikan login session cookie.
+- [x] `AUTH-0413` Implementasikan current-session bootstrap.
+- [x] `AUTH-0414` Implementasikan logout dan query cache clearing.
+- [x] `AUTH-0415` Implementasikan 401 global handling.
+- [x] `AUTH-0416` Implementasikan bounded 419 CSRF recovery.
 - [ ] `AUTH-0417` Implementasikan disabled/ineligible app user state.
 - [ ] `AUTH-0418` Uji cookie flags/CORS pada staging browser, bukan hanya unit test.
 - [ ] `AUTH-0419` E2E login, invalid credential, logout, session expiry, and return-to route.
@@ -235,14 +235,14 @@ Quality gate Phase 4:
 
 Tujuan: semua feature berikutnya memakai options/formatter/location behavior yang sama.
 
-- [ ] `FE-0501` Generate types dictionary dan location dari OpenAPI.
+- [x] `FE-0501` Generate types dictionary dan location dari OpenAPI.
 - [ ] `FE-0502` Buat dictionary query key factory dan composables.
-- [ ] `FE-0503` Buat province/regency/district/village query key factory.
-- [ ] `FE-0504` Port `useCascadingLocation` ke typed queries.
-- [ ] `FE-0505` Tambahkan AbortSignal atau stale-response protection.
-- [ ] `FE-0506` Definisikan reset child value saat parent location berubah.
-- [ ] `FE-0507` Tambahkan cache policy untuk reference data.
-- [ ] `FE-0508` Buat reusable `LocationFields` tanpa endpoint hardcoded.
+- [x] `FE-0503` Buat province/regency/district/village query key factory.
+- [x] `FE-0504` Port `useCascadingLocation` ke typed queries.
+- [x] `FE-0505` Tambahkan AbortSignal atau stale-response protection.
+- [x] `FE-0506` Definisikan reset child value saat parent location berubah.
+- [x] `FE-0507` Tambahkan cache policy untuk reference data.
+- [x] `FE-0508` Buat reusable `LocationFields` tanpa endpoint hardcoded.
 - [ ] `FE-0509` Port phone normalization/display utilities.
 - [ ] `FE-0510` Port date bridge dengan timezone/date-only tests.
 - [ ] `FE-0511` Port image preview/cropper dengan object URL cleanup.
@@ -299,13 +299,13 @@ Quality gate Phase 6:
 
 ## Phase 7 — Dashboard dan global search
 
-- [ ] `DASH-0701` Definisikan dashboard query per widget atau aggregate yang terukur.
+- [x] `DASH-0701` Definisikan dashboard query per widget atau aggregate yang terukur.
 - [ ] `DASH-0702` Port permission-based widget visibility.
-- [ ] `DASH-0703` Port stats overview dengan tabular numbers.
+- [x] `DASH-0703` Port stats overview dengan tabular numbers.
 - [ ] `DASH-0704` Port map widget dan selected marker behavior.
 - [ ] `DASH-0705` Port monthly/listing charts dengan accessible summary.
 - [ ] `DASH-0706` Port recent data, contributor, freshness, area, dan object-type tables.
-- [ ] `DASH-0707` Tangani dashboard variant data contributor.
+- [x] `DASH-0707` Tangani dashboard variant data contributor.
 - [ ] `DASH-0708` Tangani no-widget-permission sebagai intentional state.
 - [ ] `DASH-0709` Ukur query count, payload size, render time, dan chart/map chunk.
 - [ ] `SEARCH-0710` Implementasikan global search route + URL state.

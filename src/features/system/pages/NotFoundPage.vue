@@ -5,7 +5,7 @@
       <p class="system-state__context">Halaman tidak ditemukan</p>
       <h1>Alamat ini tidak tersedia</h1>
       <p>Periksa kembali alamat halaman atau kembali ke halaman utama aplikasi.</p>
-      <RouterLink class="ui-button ui-button--primary" :to="{ name: 'foundation' }">
+      <RouterLink class="ui-button ui-button--primary" :to="{ name: 'dashboard' }">
         Kembali ke halaman utama
       </RouterLink>
     </div>

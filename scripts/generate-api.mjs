@@ -4,12 +4,16 @@ import process from 'node:process'
 
 import openapiTS, { astToString } from 'openapi-typescript'
 
-const projectRoot = process.cwd()
-const source = process.env.OPENAPI_SPEC || resolve(projectRoot, 'api.json')
-const outputPath = resolve(projectRoot, 'src/shared/api/generated/schema.d.ts')
+import { loadOpenApiDocument, resolveOpenApiSource } from './openapi-source.mjs'
 
-const nodes = await openapiTS(source)
-const generated = `${astToString(nodes)}\n`
+const projectRoot = process.cwd()
+const configuredSource = process.env.OPENAPI_SPEC || resolve(projectRoot, 'api.json')
+const source = resolveOpenApiSource(configuredSource, projectRoot)
+const outputPath = resolve(projectRoot, 'src/shared/api/generated/schema.d.ts')
+const document = await loadOpenApiDocument(source)
+
+const nodes = await openapiTS(document)
+const generated = `${astToString(nodes).trim()}\n`
 
 await writeFile(outputPath, generated, 'utf8')
-process.stdout.write(`Generated API types from ${source}\n`)
+process.stdout.write(`Generated API types from ${source.href}\n`)

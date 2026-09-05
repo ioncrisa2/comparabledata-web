@@ -5,7 +5,7 @@
       <p class="system-state__context">Akses dibatasi</p>
       <h1>Anda tidak memiliki izin</h1>
       <p>Sesi Anda tetap aktif, tetapi akun ini tidak diizinkan membuka halaman tersebut.</p>
-      <RouterLink class="ui-button ui-button--primary" :to="{ name: 'foundation' }">
+      <RouterLink class="ui-button ui-button--primary" :to="{ name: 'dashboard' }">
         Kembali ke halaman utama
       </RouterLink>
     </div>

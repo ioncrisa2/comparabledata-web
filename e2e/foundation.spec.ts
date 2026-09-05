@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('shows the frontend foundation state', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/__foundation')
 
   await expect(page).toHaveTitle(/Fondasi aplikasi · HJAR Sysinfo/)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(

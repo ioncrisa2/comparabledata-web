@@ -7,6 +7,7 @@ declare module 'vue-router' {
     title: string
     layout?: 'app' | 'auth' | 'public'
     requiresAuth: boolean
+    guestOnly?: boolean
     permissions?: string[]
     permissionMode?: 'all' | 'any'
     breadcrumb?: string
