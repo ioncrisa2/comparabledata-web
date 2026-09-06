@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-import type { LocationQuery } from 'vue-router'
 
 import { parsePembandingFilters, serializePembandingFilters } from './usePembandingFilters'
 
@@ -17,7 +16,7 @@ describe('pembanding list filters', () => {
       sampai_tanggal: 'not-a-date',
       sort: 'harga',
       direction: 'ASC',
-    } as LocationQuery)
+    })
 
     expect(filters).toMatchObject({
       page: 3,
@@ -40,7 +39,7 @@ describe('pembanding list filters', () => {
       per_page: '500',
       sort: 'unknown',
       direction: 'sideways',
-    } as LocationQuery)
+    })
 
     expect(filters).toMatchObject({
       page: 1,
@@ -52,7 +51,7 @@ describe('pembanding list filters', () => {
   })
 
   it('serializes active filters for reload and browser navigation', () => {
-    const filters = parsePembandingFilters({} as LocationQuery)
+    const filters = parsePembandingFilters({})
 
     expect(
       serializePembandingFilters({

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
+import { useAuthStore } from '@/features/auth'
 import { isApiError } from '@/shared/api/error'
 import UiButton from '@/shared/components/ui/UiButton.vue'
 import UiEmptyState from '@/shared/components/ui/UiEmptyState.vue'
@@ -11,13 +12,16 @@ import UiStatusBadge from '@/shared/components/ui/UiStatusBadge.vue'
 import UiSurface from '@/shared/components/ui/UiSurface.vue'
 import { formatCurrency, formatDate, formatNumber, formatPhone } from '@/shared/formatters'
 
+import PembandingDeleteRequestDialog from '../components/PembandingDeleteRequestDialog.vue'
 import PembandingImage from '../components/PembandingImage.vue'
 import { usePembandingDetailQuery } from '../composables/usePembandingQueries'
 
 const route = useRoute()
+const auth = useAuthStore()
 const id = computed(() => String(route.params.id ?? ''))
 const validId = computed(() => /^\d+$/.test(id.value))
 const detailQuery = usePembandingDetailQuery(id)
+
 const record = computed(() => detailQuery.data.value)
 const errorStatus = computed(() =>
   isApiError(detailQuery.error.value) ? detailQuery.error.value.status : null,
@@ -34,6 +38,13 @@ const mapUrl = computed(() => {
   const coordinates = `${item.latitude},${item.longitude}`
   return `https://www.openstreetmap.org/?mlat=${item.latitude}&mlon=${item.longitude}#map=17/${coordinates}`
 })
+
+// Permission flags
+const canEdit = computed(() => auth.can('update_data::pembanding'))
+
+// Dialog state
+const deleteRequestOpen = ref(false)
+const deleteRequestSuccess = ref(false)
 
 function valueOrDash(value: string | null | undefined): string {
   return value?.trim() || '—'
@@ -101,6 +112,16 @@ function measurement(value: string | number | null | undefined, unit: string): s
     </UiSurface>
 
     <template v-else-if="record">
+      <!-- Notifikasi request hapus berhasil -->
+      <UiInlineAlert
+        v-if="deleteRequestSuccess"
+        class="pembanding-detail__delete-success"
+        tone="success"
+        title="Permintaan hapus terkirim"
+      >
+        <p>Permintaan akan ditinjau oleh moderator. Data masih tersedia sampai moderator memproses permintaan.</p>
+      </UiInlineAlert>
+
       <header class="pembanding-detail__heading">
         <div>
           <div class="pembanding-detail__badges">
@@ -112,12 +133,43 @@ function measurement(value: string | number | null | undefined, unit: string): s
           <h1>{{ record.alamat_data }}</h1>
           <p>{{ locationPath }}</p>
         </div>
-        <div class="pembanding-detail__price">
-          <span>{{ record.is_sewa ? 'Nilai sewa' : 'Harga' }}</span>
-          <strong>{{ formatCurrency(record.harga) }}</strong>
-          <small v-if="record.sewa_periode_label">{{ record.sewa_periode_label }}</small>
+        <div class="pembanding-detail__header-right">
+          <div class="pembanding-detail__price">
+            <span>{{ record.is_sewa ? 'Nilai sewa' : 'Harga' }}</span>
+            <strong :title="formatCurrency(record.harga, { compact: false })">
+              {{ formatCurrency(record.harga) }}
+            </strong>
+            <small v-if="record.sewa_periode_label">{{ record.sewa_periode_label }}</small>
+          </div>
+          <div class="pembanding-detail__actions">
+            <RouterLink
+              v-if="canEdit"
+              class="pembanding-detail__btn pembanding-detail__btn--edit"
+              :to="{ name: 'pembanding.edit', params: { id } }"
+            >
+              <i class="pi pi-pencil" aria-hidden="true" />
+              <span>Edit</span>
+            </RouterLink>
+            <button
+              v-if="!deleteRequestSuccess"
+              type="button"
+              class="pembanding-detail__btn pembanding-detail__btn--delete"
+              @click="deleteRequestOpen = true"
+            >
+              <i class="pi pi-trash" aria-hidden="true" />
+              <span>Request Hapus Data</span>
+            </button>
+          </div>
         </div>
       </header>
+
+      <!-- Dialog request hapus -->
+      <PembandingDeleteRequestDialog
+        v-model:open="deleteRequestOpen"
+        :pembanding-id="id"
+        :pembanding-label="record.alamat_data"
+        @success="deleteRequestSuccess = true"
+      />
 
       <div class="pembanding-detail__layout">
         <div class="pembanding-detail__main">
@@ -335,6 +387,91 @@ function measurement(value: string | number | null | undefined, unit: string): s
   color: var(--color-ink-strong);
   font-size: 1.5rem;
   font-variant-numeric: tabular-nums;
+}
+
+.pembanding-detail__header-right {
+  display: grid;
+  justify-items: end;
+  gap: 12px;
+}
+
+.pembanding-detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.pembanding-detail__btn {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  padding: 8px 14px;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.pembanding-detail__btn:focus-visible {
+  outline: 2px solid var(--color-brand-amber);
+  outline-offset: 2px;
+}
+
+.pembanding-detail__btn--edit {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-ink-strong);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+.pembanding-detail__btn--edit i {
+  color: var(--color-action-primary);
+}
+
+.pembanding-detail__btn--edit:hover {
+  border-color: var(--color-action-primary);
+  background: var(--color-brand-amber-soft);
+  color: var(--color-action-primary);
+  box-shadow: 0 1px 3px rgba(180, 83, 9, 0.12);
+}
+
+.pembanding-detail__btn--delete {
+  border-color: #FECACA;
+  background: #FEF2F2;
+  color: var(--color-danger);
+  box-shadow: 0 1px 2px rgba(220, 38, 38, 0.05);
+}
+
+.pembanding-detail__btn--delete i {
+  color: var(--color-danger);
+}
+
+.pembanding-detail__btn--delete:hover {
+  border-color: #F87171;
+  background: #FEE2E2;
+  color: #B91C1C;
+  box-shadow: 0 1px 3px rgba(220, 38, 38, 0.15);
+}
+
+.pembanding-detail__btn--delete:active {
+  background: #FECACA;
+  color: #991B1B;
+}
+
+.pembanding-detail__delete-success {
+  margin-bottom: 16px;
 }
 
 .pembanding-detail__layout {

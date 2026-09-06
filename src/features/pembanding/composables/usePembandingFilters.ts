@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { useRoute, useRouter, type LocationQuery, type LocationQueryRaw } from 'vue-router'
+import { type LocationQuery, type LocationQueryRaw,useRoute, useRouter } from 'vue-router'
 
 import {
   PEMBANDING_PER_PAGE_OPTIONS,

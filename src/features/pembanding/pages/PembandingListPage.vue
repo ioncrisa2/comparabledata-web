@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
+import { useAuthStore } from '@/features/auth'
 import { isApiError } from '@/shared/api/error'
 import DataTableShell from '@/shared/components/patterns/DataTableShell.vue'
 import FilterBar from '@/shared/components/patterns/FilterBar.vue'
+import UiButton from '@/shared/components/ui/UiButton.vue'
 import UiInlineAlert from '@/shared/components/ui/UiInlineAlert.vue'
 import UiPagination from '@/shared/components/ui/UiPagination.vue'
 import UiStatusBadge from '@/shared/components/ui/UiStatusBadge.vue'
 import UiSurface from '@/shared/components/ui/UiSurface.vue'
 import { formatCurrency, formatDate, formatNumber } from '@/shared/formatters'
 
+import PembandingExportDialog from '../components/PembandingExportDialog.vue'
 import PembandingFilters from '../components/PembandingFilters.vue'
 import PembandingImage from '../components/PembandingImage.vue'
 import { usePembandingFilters } from '../composables/usePembandingFilters'
@@ -22,6 +25,15 @@ import {
 import { buildActiveFilters, clearFilterPatch } from '../presentation/filters'
 import type { PembandingListFilters } from '../types/filters'
 
+const auth = useAuthStore()
+const canCreate = computed(() => auth.can('create_data::pembanding'))
+const canExport = computed(
+  () =>
+    auth.can('export_data::pembanding') ||
+    auth.can('view_export') ||
+    auth.can('view_any_data::pembanding'),
+)
+const isExportDialogOpen = ref(false)
 const { filters, reset, setPage, setPerPage, update } = usePembandingFilters()
 const route = useRoute()
 const rangeError = computed(() => {
@@ -72,9 +84,28 @@ function removeFilter(key: string) {
         <h1>Data pembanding</h1>
         <p>Telusuri, bandingkan, dan buka rekaman properti berdasarkan data yang terverifikasi.</p>
       </div>
-      <div class="pembanding-list__summary" aria-live="polite">
-        <span>Jumlah data</span>
-        <strong>{{ formatNumber(meta?.total) }}</strong>
+      <div class="pembanding-list__heading-right">
+        <div class="pembanding-list__summary" aria-live="polite">
+          <span>Jumlah data</span>
+          <strong>{{ formatNumber(meta?.total) }}</strong>
+        </div>
+        <UiButton
+          v-if="canExport"
+          variant="secondary"
+          size="sm"
+          @click="isExportDialogOpen = true"
+        >
+          <template #icon><i class="pi pi-download" aria-hidden="true" /></template>
+          Ekspor
+        </UiButton>
+        <RouterLink
+          v-if="canCreate"
+          class="ui-button ui-button--primary ui-button--sm"
+          :to="{ name: 'pembanding.create' }"
+        >
+          <i class="pi pi-plus" aria-hidden="true" />
+          Tambah data
+        </RouterLink>
       </div>
     </header>
 
@@ -168,7 +199,10 @@ function removeFilter(key: string) {
                 <strong>{{ formatNumber(item.luas_tanah) }} m²</strong>
                 <small>Bangunan {{ formatNumber(item.luas_bangunan) }} m²</small>
               </td>
-              <td class="pembanding-list__numeric pembanding-list__price">
+              <td
+                class="pembanding-list__numeric pembanding-list__price"
+                :title="formatCurrency(item.harga, { compact: false })"
+              >
                 {{ formatCurrency(item.harga) }}
               </td>
               <td class="pembanding-list__action">
@@ -215,6 +249,14 @@ function removeFilter(key: string) {
         </p>
       </UiInlineAlert>
     </UiSurface>
+
+    <!-- Dialog Ekspor Data Pembanding -->
+    <PembandingExportDialog
+      :open="isExportDialogOpen"
+      :total-items="meta?.total ?? rows.length"
+      :filters="filters"
+      @update:open="isExportDialogOpen = $event"
+    />
   </main>
 </template>
 
@@ -249,6 +291,13 @@ function removeFilter(key: string) {
   max-width: 70ch;
   margin: 0;
   color: var(--color-ink-muted);
+}
+
+.pembanding-list__heading-right {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-shrink: 0;
 }
 
 .pembanding-list__summary {
