@@ -30,6 +30,9 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 5173,
       strictPort: true,
+      watch: {
+        usePolling: env.VITE_USE_POLLING === 'true',
+      },
       proxy: {
         '/api': apiProxy,
         '/sanctum': apiProxy,

@@ -13,6 +13,7 @@ dist
 dist-ssr
 coverage
 *.local
+.env
 
 # Editor directories and files
 .vscode/*
@@ -40,6 +41,7 @@ __screenshots__/
 
 test-results/
 playwright-report/
+.impeccable/review/
 
 # Local Docker development (intentionally not committed)
 Dockerfile.local

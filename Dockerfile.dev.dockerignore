@@ -1,0 +1,5 @@
+# Only dependency manifests are needed; source is bind-mounted by Compose.
+*
+!Dockerfile.dev
+!package.json
+!package-lock.json
