@@ -1,0 +1,5 @@
+export * from './api/access-control.api'
+export { default as PermissionCreateDialog } from './components/PermissionCreateDialog.vue'
+export { default as RoleFormDialog } from './components/RoleFormDialog.vue'
+export * from './composables/useAccessControl'
+export { default as AccessControlPage } from './pages/AccessControlPage.vue'
