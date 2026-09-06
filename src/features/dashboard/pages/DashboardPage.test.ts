@@ -28,7 +28,7 @@ describe('DashboardPage', () => {
             },
             jenis_listing_options: [],
             can: {},
-            can_widgets: {},
+            can_widgets: { statsOverview: true },
             delete_request_alert: null,
           },
         }),

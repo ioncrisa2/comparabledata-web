@@ -5,17 +5,34 @@ import { useAuthStore } from '@/features/auth'
 import { isApiError } from '@/shared/api/error'
 import AsyncPanel from '@/shared/components/patterns/AsyncPanel.vue'
 import DataTableShell from '@/shared/components/patterns/DataTableShell.vue'
+import UiButton from '@/shared/components/ui/UiButton.vue'
+import UiEmptyState from '@/shared/components/ui/UiEmptyState.vue'
 import UiInlineAlert from '@/shared/components/ui/UiInlineAlert.vue'
 import UiStatusBadge from '@/shared/components/ui/UiStatusBadge.vue'
 import UiSurface from '@/shared/components/ui/UiSurface.vue'
-import { formatCurrency, formatDate, formatNumber } from '@/shared/formatters'
+import { formatCurrency, formatDateTime, formatNumber } from '@/shared/formatters'
 
+import DashboardBreakdowns from '../components/DashboardBreakdowns.vue'
+import DashboardMap from '../components/DashboardMap.vue'
+import DashboardTrends from '../components/DashboardTrends.vue'
 import { useDashboardQuery } from '../composables/useDashboardQuery'
+import { capabilityGranted, widgetAllowed } from '../presentation/widgets'
 
 const auth = useAuthStore()
-const { data: dashboard, error, isError, isPending, refetch } = useDashboardQuery()
+const {
+  data: dashboard,
+  error,
+  isError,
+  isPending,
+  isFetching,
+  isPaused,
+  dataUpdatedAt,
+  refetch,
+} = useDashboardQuery()
 
 const panelState = computed(() => {
+  if (dashboard.value) return 'success'
+  if (isPaused.value) return 'initial'
   if (isPending.value) return 'loading'
   if (isError.value) return 'error'
   return 'success'
@@ -38,6 +55,23 @@ const statCards = computed(() => {
     { label: 'Cakupan provinsi', value: formatNumber(stats.province_count), icon: 'pi pi-map' },
   ]
 })
+const hasWidgets = computed(() => {
+  const data = dashboard.value
+  if (!data) return false
+  if (widgetAllowed(data, 'statsOverview') || widgetAllowed(data, 'map')) return true
+  return Boolean(
+    extendedDashboard.value &&
+    [
+      'dataEntryTrendChart',
+      'listingCompositionChart',
+      'latestPembandingTable',
+      'topContributorTable',
+      'dataFreshnessWidget',
+      'topAreaActivityTable',
+      'objectTypeCountTable',
+    ].some((key) => capabilityGranted(data.can_widgets?.[key])),
+  )
+})
 </script>
 
 <template>
@@ -48,13 +82,23 @@ const statCards = computed(() => {
         <h1>Selamat datang, {{ auth.user?.name }}</h1>
         <p>Ringkasan aktivitas data pembanding sesuai akses akun Anda.</p>
       </div>
-      <UiStatusBadge v-if="dashboard" tone="success" icon="pi pi-check-circle">
-        {{
-          dashboard.dashboard_variant === 'data_contributor'
-            ? 'Kontributor data'
-            : 'Dashboard aktif'
-        }}
-      </UiStatusBadge>
+      <div class="dashboard-page__actions">
+        <UiStatusBadge v-if="dashboard" tone="success" icon="pi pi-check-circle">
+          {{
+            dashboard.dashboard_variant === 'data_contributor'
+              ? 'Kontributor data'
+              : 'Dashboard aktif'
+          }}
+        </UiStatusBadge>
+        <UiButton
+          v-if="dashboard"
+          :loading="isFetching"
+          :disabled="isPaused"
+          loading-label="Memperbarui dashboard"
+          @click="refetch()"
+          >Perbarui data</UiButton
+        >
+      </div>
     </header>
 
     <AsyncPanel
@@ -63,6 +107,11 @@ const statCards = computed(() => {
       :error-message="errorMessage"
       @retry="refetch()"
     >
+      <template #initial>
+        <UiInlineAlert title="Anda sedang offline" tone="warning"
+          ><p>Dashboard akan dimuat saat koneksi kembali tersedia.</p></UiInlineAlert
+        >
+      </template>
       <template #loading>
         <div class="dashboard-page__loading" aria-label="Memuat dashboard" role="status">
           <span class="sr-only">Memuat dashboard</span>
@@ -71,6 +120,23 @@ const statCards = computed(() => {
       </template>
 
       <template v-if="dashboard">
+        <p class="dashboard-page__updated" role="status">
+          {{
+            isFetching ? 'Memperbarui dashboard…' : `Diperbarui ${formatDateTime(dataUpdatedAt)}`
+          }}
+        </p>
+        <UiInlineAlert
+          v-if="isError || isPaused"
+          class="dashboard-page__alert"
+          :title="isPaused ? 'Anda sedang offline' : 'Pembaruan dashboard gagal'"
+          tone="warning"
+        >
+          <p>
+            Data terakhir tetap ditampilkan.
+            {{ isPaused ? 'Pembaruan dilanjutkan saat koneksi kembali tersedia.' : errorMessage }}
+          </p>
+          <UiButton v-if="!isPaused" size="sm" @click="refetch()">Coba lagi</UiButton>
+        </UiInlineAlert>
         <UiInlineAlert
           v-if="dashboard.delete_request_alert"
           class="dashboard-page__alert"
@@ -80,7 +146,18 @@ const statCards = computed(() => {
           <p>{{ dashboard.delete_request_alert.message }}</p>
         </UiInlineAlert>
 
-        <section class="dashboard-page__stats" aria-label="Statistik pembanding">
+        <UiEmptyState
+          v-if="!hasWidgets"
+          title="Belum ada widget yang dapat diakses"
+          description="Akun Anda belum memiliki akses ke widget dashboard. Hubungi administrator untuk pengaturan akses."
+          icon="pi pi-lock"
+        />
+
+        <section
+          v-if="widgetAllowed(dashboard, 'statsOverview')"
+          class="dashboard-page__stats"
+          aria-label="Statistik pembanding"
+        >
           <UiSurface v-for="stat in statCards" :key="stat.label" class="dashboard-page__stat">
             <span class="dashboard-page__stat-icon" aria-hidden="true"
               ><i :class="stat.icon"
@@ -92,7 +169,13 @@ const statCards = computed(() => {
           </UiSurface>
         </section>
 
-        <UiSurface v-if="extendedDashboard" class="dashboard-page__recent">
+        <DashboardMap v-if="widgetAllowed(dashboard, 'map')" :dashboard="dashboard" />
+        <DashboardTrends v-if="extendedDashboard" :dashboard="extendedDashboard" />
+
+        <UiSurface
+          v-if="extendedDashboard && widgetAllowed(dashboard, 'latestPembandingTable')"
+          class="dashboard-page__recent"
+        >
           <div class="dashboard-page__section-heading">
             <div>
               <h2>Data pembanding terbaru</h2>
@@ -123,18 +206,27 @@ const statCards = computed(() => {
                     <small>#{{ item.id }}</small>
                   </td>
                   <td>{{ item.jenis_objek }} · {{ item.jenis_listing }}</td>
-                  <td>{{ formatDate(item.tanggal) }}</td>
-                  <td class="dashboard-page__number">{{ formatCurrency(item.harga) }}</td>
+                  <td
+                    class="dashboard-page__number"
+                    :title="formatCurrency(item.harga, { compact: false })"
+                  >
+                    {{ formatCurrency(item.harga) }}
+                  </td>
                 </tr>
               </tbody>
             </table>
           </DataTableShell>
         </UiSurface>
 
-        <UiSurface v-else class="dashboard-page__session">
+        <DashboardBreakdowns v-if="extendedDashboard" :dashboard="extendedDashboard" />
+
+        <UiSurface
+          v-if="dashboard.dashboard_variant === 'data_contributor'"
+          class="dashboard-page__session"
+        >
           <div>
             <h2>Ringkasan akun kontributor</h2>
-            <p>Statistik hanya menampilkan data yang tersedia untuk akun Anda.</p>
+            <p>Widget ditampilkan sesuai izin akun Anda.</p>
           </div>
           <dl>
             <div>
@@ -169,6 +261,18 @@ const statCards = computed(() => {
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 32px;
+}
+
+.dashboard-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.dashboard-page__updated {
+  margin-bottom: 16px;
+  color: var(--color-ink-muted);
+  font-size: 0.75rem;
 }
 
 .dashboard-page__context {
@@ -287,6 +391,10 @@ const statCards = computed(() => {
   text-align: right;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+
+.dashboard-page :deep(thead th) {
+  color: var(--color-ink-body);
 }
 
 .dashboard-page__session {
