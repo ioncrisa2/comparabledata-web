@@ -4,6 +4,68 @@ Vue 3 SPA untuk alur kerja data pembanding properti HJAR. Frontend menggunakan T
 
 ## Menjalankan aplikasi
 
+### Development dengan Docker
+
+Requirement: Docker Engine/Docker Desktop dan Docker Compose v2 atau lebih baru.
+Node.js dan npm di host tidak diperlukan.
+
+```sh
+docker compose up --build -d --wait
+```
+
+Buka <http://localhost:5173>. Source code di-mount dari direktori proyek sehingga
+perubahan langsung masuk melalui hot reload. Container memakai Node.js `24.15.0`
+untuk memenuhi requirement dependency dan berjalan sebagai user `node` (UID/GID 1000).
+Dependency disimpan di volume Docker, terpisah dari `node_modules` host.
+
+```sh
+# Melihat log
+docker compose logs -f web
+
+# Menjalankan pemeriksaan kualitas di container yang sedang berjalan
+docker compose exec web npm run check
+
+# Menghentikan development (dependency tetap tersimpan)
+docker compose down
+```
+
+Setelah `package.json` atau `package-lock.json` berubah, misalnya setelah pull atau
+pindah branch, sinkronkan dependency di volume lalu restart Vite. Rebuild image
+saja tidak memperbarui volume yang sudah ada:
+
+```sh
+docker compose stop web
+docker compose run --rm --no-deps web npm ci --no-audit --no-fund
+docker compose up -d --wait
+```
+
+Untuk menambah dependency, gunakan `docker compose exec web npm install <paket>`;
+perubahan manifest dan lockfile juga tersimpan di host.
+
+Konfigurasi API tetap dibaca dari `.env.development`. Override lokal dapat ditulis
+ke `.env.development.local` (diabaikan Git). Contoh jika backend Laravel berjalan
+di host pada port 8000:
+
+```dotenv
+API_PROXY_TARGET="http://host.docker.internal:8000"
+```
+
+Backend harus mendengarkan alamat yang bisa dijangkau container (misalnya
+`0.0.0.0:8000`) dan menerima origin development untuk autentikasi Sanctum.
+Restart container setelah mengubah konfigurasi env. Compose mengatur
+`VITE_API_BASE_URL` ke origin frontend agar request tetap melewati proxy Vite.
+
+Jika port 5173 sudah dipakai, jalankan `DEV_PORT=5174 docker compose up -d --wait`
+lalu buka <http://localhost:5174>. Untuk Docker Desktop/WSL yang tidak mendeteksi
+perubahan file, jalankan `VITE_USE_POLLING=true docker compose up -d --wait`.
+Kedua opsi ini juga dapat disimpan di `.env` pada root proyek agar berlaku untuk
+perintah Compose berikutnya. Polling menggunakan lebih banyak CPU.
+
+Referensi: [Docker Compose](https://docs.docker.com/reference/compose-file/services/)
+dan [opsi server Vite](https://vite.dev/config/server-options).
+
+### Development tanpa Docker
+
 Requirement: Node.js `^22.18.0` atau `>=24.12.0`.
 
 ```sh
@@ -69,6 +131,7 @@ Semua pemeriksaan utama dapat dijalankan sekaligus dengan `npm run check`. Pengu
 
 - [Arsitektur frontend](docs/FRONTEND_ARCHITECTURE.md)
 - [Katalog endpoint](docs/API_ENDPOINTS.md)
+- [Widget dashboard dan permission](docs/DASHBOARD.md)
 - [Checklist implementasi](docs/IMPLEMENTATION_CHECKLIST.md)
 - [Pola komponen](docs/COMPONENT_PATTERNS.md)
 - [Design system](DESIGN.md)

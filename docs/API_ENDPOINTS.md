@@ -214,9 +214,14 @@ Query key:
 
 | ID | Method | Target path | Status | Dipakai untuk | Permission | Checklist |
 |---|---|---|---|---|---|---|
-| `EP-DASH-001` | GET | `/api/v1/dashboard` | `NEW` | Summary dan widget yang diizinkan untuk current user | Authenticated + widget permissions | `API-0141`, `API-0142`, `DASH-0701`–`DASH-0709` |
+| `EP-DASH-001` | GET | `/api/v1/dashboard` | `ADAPT` | Summary dan widget yang diizinkan untuk current user | Authenticated + widget permissions | `API-0141`, `API-0142`, `DASH-0701`–`DASH-0709` |
 
-Parameter yang disarankan:
+Sumber backend dan generated client sudah memuat endpoint ini. Implementasi widget,
+permission, verifikasi, dan selisih schema dijelaskan di [Dashboard](./DASHBOARD.md).
+Status tetap `ADAPT` sampai schema capability dan kontrak target diselaraskan.
+
+Parameter yang disarankan untuk target kontrak (belum didukung controller/generated
+operation saat ini; frontend tidak mengirimkannya):
 
 ```text
 jenis_listing_id=<id>

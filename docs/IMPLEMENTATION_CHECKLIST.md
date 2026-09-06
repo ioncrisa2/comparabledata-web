@@ -300,14 +300,17 @@ Quality gate Phase 6:
 ## Phase 7 — Dashboard dan global search
 
 - [x] `DASH-0701` Definisikan dashboard query per widget atau aggregate yang terukur.
-- [ ] `DASH-0702` Port permission-based widget visibility.
+- [x] `DASH-0702` Port permission-based widget visibility.
 - [x] `DASH-0703` Port stats overview dengan tabular numbers.
-- [ ] `DASH-0704` Port map widget dan selected marker behavior.
-- [ ] `DASH-0705` Port monthly/listing charts dengan accessible summary.
-- [ ] `DASH-0706` Port recent data, contributor, freshness, area, dan object-type tables.
+- [x] `DASH-0704` Port map widget dan selected marker behavior.
+- [x] `DASH-0705` Port monthly/listing charts dengan accessible summary.
+- [x] `DASH-0706` Port recent data, contributor, freshness, area, dan object-type tables.
 - [x] `DASH-0707` Tangani dashboard variant data contributor.
-- [ ] `DASH-0708` Tangani no-widget-permission sebagai intentional state.
-- [ ] `DASH-0709` Ukur query count, payload size, render time, dan chart/map chunk.
+- [x] `DASH-0708` Tangani no-widget-permission sebagai intentional state.
+- [-] `DASH-0709` Ukur query count, payload size, render time, dan chart/map chunk.
+  Satu request dashboard diuji pada flow browser; lazy chunks lulus bundle budget.
+  Pengukuran payload/render pada volume data staging masih diperlukan. Detail dan
+  batas verifikasi ada di [Dashboard](./DASHBOARD.md).
 - [ ] `SEARCH-0710` Implementasikan global search route + URL state.
 - [ ] `SEARCH-0711` Port filters, pagination, result grouping, dan permission handling.
 - [ ] `SEARCH-0712` Sinkronkan topbar search dengan search page tanpa duplicate state.
@@ -583,7 +586,7 @@ Isi tabel ini pada setiap planning/release review.
 | 4 Auth/shell | Not started |  |  | `GATE-04` |  |
 | 5 Domain utilities | Not started |  |  | `GATE-05` |  |
 | 6 Pembanding | Not started |  |  | `GATE-06` |  |
-| 7 Dashboard/search | Not started |  |  | `GATE-07` |  |
+| 7 Dashboard/search | In progress | Frontend |  | `GATE-07` | Widget dashboard tersedia; pengukuran data nyata, keselarasan schema API, dan global search masih terbuka. Lihat DASHBOARD.md. |
 | 8 Master/geo | Not started |  |  | `GATE-08` |  |
 | 9 Identity/access | Not started |  |  | `GATE-09` |  |
 | 10 Moderation | Not started |  |  | `GATE-10` |  |
