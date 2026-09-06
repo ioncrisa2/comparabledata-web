@@ -12,12 +12,14 @@ withDefaults(
     emptyDescription?: string
     filtered?: boolean
     loadingRows?: number
+    errorMessage?: string
   }>(),
   {
     emptyTitle: 'Belum ada data',
     emptyDescription: 'Data akan tampil di sini setelah tersedia.',
     filtered: false,
     loadingRows: 5,
+    errorMessage: '',
   },
 )
 
@@ -34,7 +36,7 @@ defineEmits<{ retry: [] }>()
     </div>
 
     <UiInlineAlert v-else-if="state === 'error'" title="Data gagal dimuat" tone="error">
-      <p>Terjadi gangguan saat mengambil data. Coba kembali tanpa mengubah filter Anda.</p>
+      <p>{{ errorMessage || 'Terjadi gangguan saat mengambil data. Coba kembali tanpa mengubah filter Anda.' }}</p>
       <UiButton size="sm" @click="$emit('retry')">Coba lagi</UiButton>
     </UiInlineAlert>
 

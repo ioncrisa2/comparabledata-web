@@ -3,6 +3,7 @@ type ErrorPayload = {
   message?: unknown
   errors?: unknown
   request_id?: unknown
+  duplicate?: unknown
 }
 
 export type ApiErrorInit = {
@@ -12,6 +13,7 @@ export type ApiErrorInit = {
   fieldErrors?: Record<string, string[]>
   requestId?: string
   retryAfterSeconds?: number
+  duplicate?: Record<string, unknown>
 }
 
 export class ApiError extends Error {
@@ -20,6 +22,7 @@ export class ApiError extends Error {
   readonly fieldErrors: Record<string, string[]>
   readonly requestId?: string
   readonly retryAfterSeconds?: number
+  readonly duplicate?: Record<string, unknown>
 
   constructor(init: ApiErrorInit) {
     super(init.message)
@@ -29,6 +32,7 @@ export class ApiError extends Error {
     this.fieldErrors = init.fieldErrors ?? {}
     this.requestId = init.requestId
     this.retryAfterSeconds = init.retryAfterSeconds
+    this.duplicate = init.duplicate
   }
 }
 
@@ -85,6 +89,10 @@ export async function apiErrorFromResponse(response: Response): Promise<ApiError
     requestId:
       typeof payload.request_id === 'string' ? payload.request_id : (requestIdHeader ?? undefined),
     retryAfterSeconds: parseRetryAfter(response.headers.get('retry-after')),
+    duplicate:
+      payload.duplicate && typeof payload.duplicate === 'object'
+        ? (payload.duplicate as Record<string, unknown>)
+        : undefined,
   })
 }
 
