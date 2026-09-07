@@ -32,7 +32,9 @@ const auth = useAuthStore()
 const canViewInactive = computed(() => auth.can('view_master_data'))
 const canCreate = computed(() => auth.can('create_master_data'))
 const canUpdate = computed(() => auth.can('update_master_data'))
-const canUpdateStatus = computed(() => auth.can('update_master_data_status') || auth.can('update_master_data'))
+const canUpdateStatus = computed(
+  () => auth.can('update_master_data_status') || auth.can('update_master_data'),
+)
 const canDelete = computed(() => auth.can('delete_master_data'))
 
 // Categories query
@@ -79,9 +81,7 @@ const filteredItems = computed<DictionaryItem[]>(() => {
   const list = rawItems.value ?? []
   if (!itemSearch.value.trim()) return list
   const q = itemSearch.value.toLowerCase().trim()
-  return list.filter(
-    (it) => it.name.toLowerCase().includes(q) || it.slug.toLowerCase().includes(q),
-  )
+  return list.filter((it) => it.name.toLowerCase().includes(q) || it.slug.toLowerCase().includes(q))
 })
 
 const categoriesPanelState = computed<'loading' | 'error' | 'success'>(() => {
@@ -167,9 +167,7 @@ async function handleToggleStatus(item: DictionaryItem) {
     actionAlertMessage.value = `Status "${item.name}" diubah menjadi ${newStatus ? 'Aktif' : 'Nonaktif'}.`
     actionAlertTone.value = 'success'
   } catch (err) {
-    actionAlertMessage.value = isApiError(err)
-      ? err.message
-      : 'Gagal mengubah status data.'
+    actionAlertMessage.value = isApiError(err) ? err.message : 'Gagal mengubah status data.'
     actionAlertTone.value = 'error'
   }
 }
@@ -216,9 +214,7 @@ async function moveItem(index: number, direction: 'up' | 'down') {
     actionAlertMessage.value = 'Urutan data berhasil diperbarui.'
     actionAlertTone.value = 'success'
   } catch (err) {
-    actionAlertMessage.value = isApiError(err)
-      ? err.message
-      : 'Gagal memperbarui urutan.'
+    actionAlertMessage.value = isApiError(err) ? err.message : 'Gagal memperbarui urutan.'
     actionAlertTone.value = 'error'
   }
 }
@@ -236,11 +232,7 @@ async function moveItem(index: number, direction: 'up' | 'down') {
           </p>
         </div>
         <div v-if="canCreate">
-          <UiButton
-            variant="primary"
-            data-testid="master-data-add-btn"
-            @click="openCreateDialog"
-          >
+          <UiButton variant="primary" data-testid="master-data-add-btn" @click="openCreateDialog">
             <template #icon><i class="pi pi-plus" aria-hidden="true" /></template>
             Tambah {{ activeCategory?.label || 'Data' }}
           </UiButton>
@@ -260,10 +252,7 @@ async function moveItem(index: number, direction: 'up' | 'down') {
       </UiInlineAlert>
 
       <!-- Category Navigation Pills / Cards -->
-      <AsyncPanel
-        :state="categoriesPanelState"
-        loading-title="Memuat kategori..."
-      >
+      <AsyncPanel :state="categoriesPanelState" loading-title="Memuat kategori...">
         <div class="master-data-page__categories" role="tablist" aria-label="Kategori master data">
           <button
             v-for="cat in categories"
@@ -293,7 +282,10 @@ async function moveItem(index: number, direction: 'up' | 'down') {
               {{ activeCategory?.label || 'Data Referensi' }}
             </h2>
             <p class="master-data-page__content-desc">
-              {{ activeCategory?.description || 'Daftar pilihan referensi yang dapat digunakan dalam sistem.' }}
+              {{
+                activeCategory?.description ||
+                'Daftar pilihan referensi yang dapat digunakan dalam sistem.'
+              }}
             </p>
           </div>
 
@@ -325,103 +317,105 @@ async function moveItem(index: number, direction: 'up' | 'down') {
           class="master-data-page__table-shell"
         >
           <table>
-              <thead>
-                <tr>
-                  <th style="width: 60px;">No</th>
-                  <th style="width: 100px;">Urutan</th>
-                  <th>Nama Referensi</th>
-                  <th>Slug</th>
-                  <th>Penggunaan</th>
-                  <th style="width: 120px;">Status</th>
-                  <th style="width: 140px;" class="text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(item, idx) in filteredItems" :key="item.id">
-                  <td>{{ idx + 1 }}</td>
-                  <td>
-                    <div class="master-data-page__reorder-btns">
-                      <button
-                        type="button"
-                        class="master-data-page__arrow-btn"
-                        :disabled="idx === 0 || reorderMutation.isPending.value"
-                        title="Geser ke atas"
-                        @click="moveItem(idx, 'up')"
-                      >
-                        <i class="pi pi-chevron-up" aria-hidden="true" />
-                      </button>
-                      <button
-                        type="button"
-                        class="master-data-page__arrow-btn"
-                        :disabled="idx === filteredItems.length - 1 || reorderMutation.isPending.value"
-                        title="Geser ke bawah"
-                        @click="moveItem(idx, 'down')"
-                      >
-                        <i class="pi pi-chevron-down" aria-hidden="true" />
-                      </button>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="master-data-page__item-name">
-                      <span
-                        v-if="item.badge_color"
-                        class="master-data-page__color-dot"
-                        :style="{ backgroundColor: item.badge_color }"
-                      />
-                      <strong>{{ item.name }}</strong>
-                    </div>
-                  </td>
-                  <td>
-                    <code class="master-data-page__slug">{{ item.slug }}</code>
-                  </td>
-                  <td>
-                    <span class="master-data-page__usage">
-                      <i class="pi pi-database" aria-hidden="true" />
-                      {{ item.pembandings_count ?? 0 }} listing
-                    </span>
-                  </td>
-                  <td>
+            <thead>
+              <tr>
+                <th style="width: 60px">No</th>
+                <th style="width: 100px">Urutan</th>
+                <th>Nama Referensi</th>
+                <th>Slug</th>
+                <th>Penggunaan</th>
+                <th style="width: 120px">Status</th>
+                <th style="width: 140px" class="text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, idx) in filteredItems" :key="item.id">
+                <td>{{ idx + 1 }}</td>
+                <td>
+                  <div class="master-data-page__reorder-btns">
                     <button
-                      v-if="canUpdateStatus"
                       type="button"
-                      class="master-data-page__status-btn"
-                      :title="item.is_active ? 'Klik untuk nonaktifkan' : 'Klik untuk aktifkan'"
-                      @click="handleToggleStatus(item)"
+                      class="master-data-page__arrow-btn"
+                      :disabled="idx === 0 || reorderMutation.isPending.value"
+                      title="Geser ke atas"
+                      @click="moveItem(idx, 'up')"
                     >
-                      <UiStatusBadge :status="item.is_active ? 'active' : 'inactive'">
-                        {{ item.is_active ? 'Aktif' : 'Nonaktif' }}
-                      </UiStatusBadge>
+                      <i class="pi pi-chevron-up" aria-hidden="true" />
                     </button>
-                    <UiStatusBadge v-else :status="item.is_active ? 'active' : 'inactive'">
+                    <button
+                      type="button"
+                      class="master-data-page__arrow-btn"
+                      :disabled="
+                        idx === filteredItems.length - 1 || reorderMutation.isPending.value
+                      "
+                      title="Geser ke bawah"
+                      @click="moveItem(idx, 'down')"
+                    >
+                      <i class="pi pi-chevron-down" aria-hidden="true" />
+                    </button>
+                  </div>
+                </td>
+                <td>
+                  <div class="master-data-page__item-name">
+                    <span
+                      v-if="item.badge_color"
+                      class="master-data-page__color-dot"
+                      :style="{ backgroundColor: item.badge_color }"
+                    />
+                    <strong>{{ item.name }}</strong>
+                  </div>
+                </td>
+                <td>
+                  <code class="master-data-page__slug">{{ item.slug }}</code>
+                </td>
+                <td>
+                  <span class="master-data-page__usage">
+                    <i class="pi pi-database" aria-hidden="true" />
+                    {{ item.pembandings_count ?? 0 }} listing
+                  </span>
+                </td>
+                <td>
+                  <button
+                    v-if="canUpdateStatus"
+                    type="button"
+                    class="master-data-page__status-btn"
+                    :title="item.is_active ? 'Klik untuk nonaktifkan' : 'Klik untuk aktifkan'"
+                    @click="handleToggleStatus(item)"
+                  >
+                    <UiStatusBadge :status="item.is_active ? 'active' : 'inactive'">
                       {{ item.is_active ? 'Aktif' : 'Nonaktif' }}
                     </UiStatusBadge>
-                  </td>
-                  <td class="text-right">
-                    <div class="master-data-page__row-actions">
-                      <button
-                        v-if="canUpdate"
-                        type="button"
-                        class="master-data-page__action-btn master-data-page__action-btn--edit"
-                        title="Ubah data"
-                        @click="openEditDialog(item)"
-                      >
-                        <i class="pi pi-pencil" aria-hidden="true" />
-                      </button>
-                      <button
-                        v-if="canDelete"
-                        type="button"
-                        class="master-data-page__action-btn master-data-page__action-btn--delete"
-                        title="Hapus data"
-                        @click="confirmDelete(item)"
-                      >
-                        <i class="pi pi-trash" aria-hidden="true" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </DataTableShell>
+                  </button>
+                  <UiStatusBadge v-else :status="item.is_active ? 'active' : 'inactive'">
+                    {{ item.is_active ? 'Aktif' : 'Nonaktif' }}
+                  </UiStatusBadge>
+                </td>
+                <td class="text-right">
+                  <div class="master-data-page__row-actions">
+                    <button
+                      v-if="canUpdate"
+                      type="button"
+                      class="master-data-page__action-btn master-data-page__action-btn--edit"
+                      title="Ubah data"
+                      @click="openEditDialog(item)"
+                    >
+                      <i class="pi pi-pencil" aria-hidden="true" />
+                    </button>
+                    <button
+                      v-if="canDelete"
+                      type="button"
+                      class="master-data-page__action-btn master-data-page__action-btn--delete"
+                      title="Hapus data"
+                      @click="confirmDelete(item)"
+                    >
+                      <i class="pi pi-trash" aria-hidden="true" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </DataTableShell>
       </UiSurface>
     </div>
 

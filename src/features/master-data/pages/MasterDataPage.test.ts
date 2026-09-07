@@ -72,7 +72,8 @@ describe('MasterDataPage', () => {
         stubs: {
           UiDialog: {
             props: ['open', 'title'],
-            template: '<div v-if="open" class="dialog-mock"><h3>{{ title }}</h3><slot /><slot name="footer" /></div>',
+            template:
+              '<div v-if="open" class="dialog-mock"><h3>{{ title }}</h3><slot /><slot name="footer" /></div>',
           },
           UiConfirmDialog: {
             props: ['open', 'title'],

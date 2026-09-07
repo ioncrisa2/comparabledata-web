@@ -27,8 +27,7 @@ export function useDictionaryItemsQuery(
 ) {
   return useQuery({
     queryKey: ['dictionary-items', type, activeOnly],
-    queryFn: ({ signal }) =>
-      fetchDictionaryItems(unref(type), unref(activeOnly), { signal }),
+    queryFn: ({ signal }) => fetchDictionaryItems(unref(type), unref(activeOnly), { signal }),
     enabled: () => Boolean(unref(type)),
     staleTime: 30_000,
   })

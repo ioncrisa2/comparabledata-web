@@ -20,7 +20,14 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
-  save: [payload: { name: string; is_active: boolean; badge_color?: string | null; marker_icon_url?: string | null }]
+  save: [
+    payload: {
+      name: string
+      is_active: boolean
+      badge_color?: string | null
+      marker_icon_url?: string | null
+    },
+  ]
 }>()
 
 const isEdit = computed(() => Boolean(props.item))
@@ -74,8 +81,12 @@ function handleSubmit() {
   emit('save', {
     name: name.value.trim(),
     is_active: isActive.value,
-    badge_color: props.categoryExtra?.includes('badge_color') ? (badgeColor.value || null) : undefined,
-    marker_icon_url: props.categoryExtra?.includes('marker_icon_url') ? (markerIconUrl.value || null) : undefined,
+    badge_color: props.categoryExtra?.includes('badge_color')
+      ? badgeColor.value || null
+      : undefined,
+    marker_icon_url: props.categoryExtra?.includes('marker_icon_url')
+      ? markerIconUrl.value || null
+      : undefined,
   })
 }
 
@@ -96,11 +107,7 @@ function handleClose() {
     @close="handleClose"
   >
     <form class="master-data-dialog" @submit.prevent="handleSubmit">
-      <UiInlineAlert
-        v-if="validationError || error"
-        tone="error"
-        title="Terjadi kesalahan"
-      >
+      <UiInlineAlert v-if="validationError || error" tone="error" title="Terjadi kesalahan">
         <p>{{ validationError || error }}</p>
       </UiInlineAlert>
 
@@ -140,10 +147,7 @@ function handleClose() {
       </UiField>
 
       <!-- Extra: Marker Icon URL -->
-      <UiField
-        v-if="categoryExtra?.includes('marker_icon_url')"
-        label="URL Icon Marker (Opsional)"
-      >
+      <UiField v-if="categoryExtra?.includes('marker_icon_url')" label="URL Icon Marker (Opsional)">
         <input
           v-model="markerIconUrl"
           type="text"
@@ -172,13 +176,7 @@ function handleClose() {
 
     <template #footer>
       <div class="master-data-dialog__footer">
-        <UiButton
-          variant="secondary"
-          :disabled="busy"
-          @click="handleClose"
-        >
-          Batal
-        </UiButton>
+        <UiButton variant="secondary" :disabled="busy" @click="handleClose"> Batal </UiButton>
         <UiButton
           variant="primary"
           :loading="busy"
@@ -210,7 +208,9 @@ function handleClose() {
   font-size: 0.875rem;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .master-data-dialog__input:focus {
