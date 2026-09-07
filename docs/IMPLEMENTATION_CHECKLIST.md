@@ -192,14 +192,14 @@ Tujuan: private SPA shell aman dan siap menjadi host seluruh feature.
 
 ### Router
 
-- [ ] `FE-0401` Implementasikan canonical route tree dan named route constants.
-- [ ] `FE-0402` Type route meta: title, layout, auth, permissions, breadcrumb.
-- [ ] `FE-0403` Implementasikan route lazy loading per feature.
+- [x] `FE-0401` Implementasikan canonical route tree dan named route constants.
+- [x] `FE-0402` Type route meta: title, layout, auth, permissions, breadcrumb.
+- [x] `FE-0403` Implementasikan route lazy loading per feature.
 - [x] `FE-0404` Implementasikan global auth/permission guard tanpa infinite redirect.
-- [ ] `FE-0405` Implementasikan 403, 404, maintenance, dan unexpected-error routes.
-- [ ] `FE-0406` Implementasikan scroll behavior dan route focus/announcement.
+- [x] `FE-0405` Implementasikan 403, 404, maintenance, dan unexpected-error routes.
+- [x] `FE-0406` Implementasikan scroll behavior dan route focus/announcement.
 - [x] `FE-0407` Implementasikan safe `redirect` query setelah login.
-- [ ] `FE-0408` Tambahkan router tests untuk deep link, redirect, auth, permission, dan back/forward.
+- [x] `FE-0408` Tambahkan router tests untuk deep link, redirect, auth, permission, dan back/forward.
 
 ### Auth
 
@@ -258,40 +258,44 @@ Quality gate Phase 5:
 
 Tujuan: migrasikan domain utama lebih dahulu untuk membuktikan arsitektur.
 
+Status implementasi, perbaikan form, cakupan tes browser, dan pekerjaan tersisa
+dicatat di [Status alur Data Pembanding](./PEMBANDING.md). Tes dengan API mock
+tidak menggantikan verifikasi integrasi backend untuk penutupan gate.
+
 ### List/filter/map
 
-- [ ] `PEM-0601` Implementasikan list query dari `/api/v1/pembandings`.
-- [ ] `PEM-0602` Samakan filter API dengan filter Inertia existing; catat perbedaan.
-- [ ] `PEM-0603` Implementasikan URL serializer/parser untuk seluruh filter.
-- [ ] `PEM-0604` Implementasikan search debounce dan cancellation.
-- [ ] `PEM-0605` Port quick filters, detailed filter drawer, active chips, reset.
-- [ ] `PEM-0606` Port result panel dan pagination.
-- [ ] `PEM-0607` Implementasikan map/list mode bila parity membutuhkan.
-- [ ] `PEM-0608` Port export-by-filter entry point.
-- [ ] `PEM-0609` Uji filtered empty, invalid range, large result, and back/forward.
+- [x] `PEM-0601` Implementasikan list query dari `/api/v1/pembandings`.
+- [x] `PEM-0602` Samakan filter API dengan filter Inertia existing; catat perbedaan.
+- [x] `PEM-0603` Implementasikan URL serializer/parser untuk seluruh filter.
+- [x] `PEM-0604` Implementasikan search debounce dan cancellation.
+- [x] `PEM-0605` Port quick filters, detailed filter drawer, active chips, reset.
+- [x] `PEM-0606` Port result panel dan pagination.
+- [x] `PEM-0607` Implementasikan map/list mode bila parity membutuhkan.
+- [x] `PEM-0608` Port export-by-filter entry point.
+- [x] `PEM-0609` Uji filtered empty, invalid range, large result, and back/forward.
 
 ### Detail/history
 
-- [ ] `PEM-0610` Implementasikan detail query dan DTO presentation mapping.
-- [ ] `PEM-0611` Port detail header, stats, info sections, media, notes, dan map.
-- [ ] `PEM-0612` Implementasikan permission-aware edit/delete-request actions.
-- [ ] `PEM-0613` Implementasikan history query dan activity change labels.
-- [ ] `PEM-0614` Implementasikan image missing/broken fallback.
-- [ ] `PEM-0615` Uji 403, 404, deleted/changed record, and partial nullable data.
+- [x] `PEM-0610` Implementasikan detail query dan DTO presentation mapping.
+- [x] `PEM-0611` Port detail header, stats, info sections, media, notes, dan map.
+- [x] `PEM-0612` Implementasikan permission-aware edit/delete-request actions.
+- [x] `PEM-0613` Implementasikan history query dan activity change labels.
+- [x] `PEM-0614` Implementasikan image missing/broken fallback.
+- [x] `PEM-0615` Uji 403, 404, deleted/changed record, and partial nullable data.
 
 ### Create/edit
 
-- [ ] `PEM-0620` Definisikan typed `PembandingFormValues` dan payload mapper.
-- [ ] `PEM-0621` Buat satu reusable `PembandingForm` untuk create/edit.
-- [ ] `PEM-0622` Port general, location, property, dan notes tabs/sections.
-- [ ] `PEM-0623` Integrasikan form-options query dan cascading location.
-- [ ] `PEM-0624` Implementasikan client schema dan Laravel 422 mapping.
-- [ ] `PEM-0625` Implementasikan multipart create/update workaround yang didokumentasikan API.
-- [ ] `PEM-0626` Implementasikan upload preview, cropper, replace/remove, MIME/size feedback.
-- [ ] `PEM-0627` Implementasikan unsaved-change route guard.
-- [ ] `PEM-0628` Implementasikan duplicate 409 response handling.
-- [ ] `PEM-0629` Implementasikan duplicate review/use existing/replace flow.
-- [ ] `PEM-0630` E2E create, edit, validation, duplicate resolution, image, dan delete request.
+- [x] `PEM-0620` Definisikan typed `PembandingFormValues` dan payload mapper.
+- [x] `PEM-0621` Buat satu reusable `PembandingForm` untuk create/edit.
+- [x] `PEM-0622` Port general, location, property, dan notes tabs/sections.
+- [x] `PEM-0623` Integrasikan form-options query dan cascading location.
+- [x] `PEM-0624` Implementasikan client schema dan Laravel 422 mapping.
+- [x] `PEM-0625` Implementasikan multipart create/update workaround yang didokumentasikan API.
+- [x] `PEM-0626` Implementasikan upload preview, cropper, replace/remove, MIME/size feedback.
+- [x] `PEM-0627` Implementasikan unsaved-change route guard.
+- [x] `PEM-0628` Implementasikan duplicate 409 response handling.
+- [x] `PEM-0629` Implementasikan duplicate review/use existing/replace flow.
+- [x] `PEM-0630` E2E create, edit, validation, duplicate resolution, image, dan delete request.
 
 Quality gate Phase 6:
 
@@ -311,9 +315,9 @@ Quality gate Phase 6:
   Satu request dashboard diuji pada flow browser; lazy chunks lulus bundle budget.
   Pengukuran payload/render pada volume data staging masih diperlukan. Detail dan
   batas verifikasi ada di [Dashboard](./DASHBOARD.md).
-- [ ] `SEARCH-0710` Implementasikan global search route + URL state.
-- [ ] `SEARCH-0711` Port filters, pagination, result grouping, dan permission handling.
-- [ ] `SEARCH-0712` Sinkronkan topbar search dengan search page tanpa duplicate state.
+- [x] `SEARCH-0710` Implementasikan global search route + URL state.
+- [x] `SEARCH-0711` Port filters, pagination, result grouping, dan permission handling.
+- [x] `SEARCH-0712` Sinkronkan topbar search dengan search page tanpa duplicate state.
 - [ ] `SEARCH-0713` E2E dashboard roles dan global search/back-forward.
 
 Quality gate Phase 7:
@@ -324,21 +328,21 @@ Quality gate Phase 7:
 
 ### Master data
 
-- [ ] `MASTER-0801` Implementasikan master-data overview query.
-- [ ] `MASTER-0802` Implementasikan dynamic dictionary route validation.
-- [ ] `MASTER-0803` Port Dictionary CRUD list/form.
-- [ ] `MASTER-0804` Implementasikan create/update/status/delete mutations.
-- [ ] `MASTER-0805` Implementasikan reorder dengan rollback pada failure.
-- [ ] `MASTER-0806` Tangani active/inactive, protected record, duplicate slug/name, dan in-use conflict.
+- [x] `MASTER-0801` Implementasikan master-data overview query.
+- [x] `MASTER-0802` Implementasikan dynamic dictionary route validation.
+- [x] `MASTER-0803` Port Dictionary CRUD list/form.
+- [x] `MASTER-0804` Implementasikan create/update/status/delete mutations.
+- [x] `MASTER-0805` Implementasikan reorder dengan rollback pada failure.
+- [x] `MASTER-0806` Tangani active/inactive, protected record, duplicate slug/name, dan in-use conflict.
 - [ ] `MASTER-0807` E2E permission matrix master data.
 
 ### Geo data
 
-- [ ] `GEO-0810` Implementasikan resource-aware geo list/filter query.
-- [ ] `GEO-0811` Pecah page GeoData lama menjadi toolbar, table, form panel, dan location selector.
-- [ ] `GEO-0812` Implementasikan create/update/delete mutations.
-- [ ] `GEO-0813` Tangani hierarchical dependency dan record in-use conflict.
-- [ ] `GEO-0814` Uji ID generation/validation yang terlihat di frontend.
+- [x] `GEO-0810` Implementasikan resource-aware geo list/filter query.
+- [x] `GEO-0811` Pecah page GeoData lama menjadi toolbar, table, form panel, dan location selector.
+- [x] `GEO-0812` Implementasikan create/update/delete mutations.
+- [x] `GEO-0813` Tangani hierarchical dependency dan record in-use conflict.
+- [x] `GEO-0814` Uji ID generation/validation yang terlihat di frontend.
 - [ ] `GEO-0815` E2E province sampai village CRUD sesuai permission.
 
 Quality gate Phase 8:
@@ -349,122 +353,122 @@ Quality gate Phase 8:
 
 ### Users
 
-- [ ] `USER-0901` Implementasikan user list/filter/pagination query.
-- [ ] `USER-0902` Port selection dan bulk delete dengan hasil parsial yang jelas.
-- [ ] `USER-0903` Implementasikan create/edit form serta role assignment.
-- [ ] `USER-0904` Implementasikan active status mutation.
-- [ ] `USER-0905` Tangani self-deactivation/delete dan protected super-admin rules.
+- [x] `USER-0901` Implementasikan user list/filter/pagination query.
+- [x] `USER-0902` Port selection dan bulk delete dengan hasil parsial yang jelas.
+- [x] `USER-0903` Implementasikan create/edit form serta role assignment.
+- [x] `USER-0904` Implementasikan active status mutation.
+- [x] `USER-0905` Tangani self-deactivation/delete dan protected super-admin rules.
 - [ ] `USER-0906` E2E permission matrix users.
 
 ### Access control
 
-- [ ] `ACL-0910` Implementasikan roles/permissions queries.
-- [ ] `ACL-0911` Pecah AccessControl page lama menjadi role list/editor dan permission list/editor.
-- [ ] `ACL-0912` Implementasikan role create/update/delete.
-- [ ] `ACL-0913` Implementasikan permission create/delete sesuai backend capability.
-- [ ] `ACL-0914` Invalidasi auth/session permission bila current user terdampak.
-- [ ] `ACL-0915` Tangani protected/in-use role-permission conflict.
-- [ ] `ACL-0916` E2E access-control critical operations.
+- [x] `ACL-0910` Implementasikan roles/permissions queries.
+- [x] `ACL-0911` Pecah AccessControl page lama menjadi role list/editor dan permission list/editor.
+- [x] `ACL-0912` Implementasikan role create/update/delete.
+- [x] `ACL-0913` Implementasikan permission create/delete sesuai backend capability.
+- [x] `ACL-0914` Invalidasi auth/session permission bila current user terdampak.
+- [x] `ACL-0915` Tangani protected/in-use role-permission conflict.
+- [x] `ACL-0916` E2E access-control critical operations.
 
 ### Contributor invitations
 
-- [ ] `INV-0920` Implementasikan invitation/request list queries dan shareable active tab.
-- [ ] `INV-0921` Implementasikan invitation generation/revoke.
-- [ ] `INV-0922` Implementasikan safe copy-to-clipboard fallback dan feedback.
-- [ ] `INV-0923` Implementasikan accept/reject request dengan reason validation.
-- [ ] `INV-0924` Migrasikan public registration token states: valid, invalid, expired, used, submitted.
-- [ ] `INV-0925` E2E invitation-to-registration-to-approval flow.
+- [x] `INV-0920` Implementasikan invitation/request list queries dan shareable active tab.
+- [x] `INV-0921` Implementasikan invitation generation/revoke.
+- [x] `INV-0922` Implementasikan safe copy-to-clipboard fallback dan feedback.
+- [x] `INV-0923` Implementasikan accept/reject request dengan reason validation.
+- [x] `INV-0924` Migrasikan public registration token states: valid, invalid, expired, used, submitted.
+- [x] `INV-0925` E2E invitation-to-registration-to-approval flow.
 
 Quality gate Phase 9:
 
-- [ ] `GATE-09` Identity/access administrative flows mencapai parity dan protected-account edge cases telah diuji.
+- [x] `GATE-09` Identity/access administrative flows mencapai parity dan protected-account edge cases telah diuji.
 
 ## Phase 10 — Moderation
 
-- [ ] `MOD-1001` Implementasikan pending request dan deleted data queries.
-- [ ] `MOD-1002` Simpan tab/search/page moderation di URL.
-- [ ] `MOD-1003` Port approve mutation dengan target summary.
-- [ ] `MOD-1004` Port reject mutation dengan mandatory review note.
-- [ ] `MOD-1005` Port restore mutation.
-- [ ] `MOD-1006` Port force-delete dengan high-friction confirmation dan exact target.
-- [ ] `MOD-1007` Tangani record changed/already reviewed conflict.
-- [ ] `MOD-1008` Invalidasi dashboard, pembanding, moderation, dan relevant audit queries.
-- [ ] `MOD-1009` E2E concurrent moderation conflict dan permission matrix.
+- [x] `MOD-1001` Implementasikan pending request dan deleted data queries.
+- [x] `MOD-1002` Simpan tab/search/page moderation di URL.
+- [x] `MOD-1003` Port approve mutation dengan target summary.
+- [x] `MOD-1004` Port reject mutation dengan mandatory review note.
+- [x] `MOD-1005` Port restore mutation.
+- [x] `MOD-1006` Port force-delete dengan high-friction confirmation dan exact target.
+- [x] `MOD-1007` Tangani record changed/already reviewed conflict.
+- [x] `MOD-1008` Invalidasi dashboard, pembanding, moderation, dan relevant audit queries.
+- [x] `MOD-1009` E2E concurrent moderation conflict dan permission matrix.
 
 Quality gate Phase 10:
 
-- [ ] `GATE-10` Moderation state transitions akurat, auditable, tahan double-submit, dan conflict-safe.
+- [x] `GATE-10` Moderation state transitions akurat, auditable, tahan double-submit, dan conflict-safe.
 
 ## Phase 11 — Bulk import dan export
 
 ### Bulk import
 
-- [ ] `IMPORT-1101` Implementasikan batch list/pagination/status.
-- [ ] `IMPORT-1102` Implementasikan file upload dengan progress/cancel bila transport mendukung.
-- [ ] `IMPORT-1103` Validasi extension/size client tanpa menggantikan server validation.
-- [ ] `IMPORT-1104` Implementasikan batch detail dan bounded polling saat processing.
-- [ ] `IMPORT-1105` Port row table, visible selection, select-all semantics, dan result summary.
-- [ ] `IMPORT-1106` Implementasikan row edit form/image preview.
-- [ ] `IMPORT-1107` Implementasikan selection patch dan bulk apply.
-- [ ] `IMPORT-1108` Implementasikan row retry dan retry status.
-- [ ] `IMPORT-1109` Implementasikan finalize confirmation/idempotency.
-- [ ] `IMPORT-1110` Tangani partial failure, stale batch, invalid row, missing staged image, dan expired artifact.
-- [ ] `IMPORT-1111` E2E upload-to-finalize dengan success dan partial failure fixture.
+- [x] `IMPORT-1101` Implementasikan batch list/pagination/status.
+- [x] `IMPORT-1102` Implementasikan file upload dengan progress/cancel bila transport mendukung.
+- [x] `IMPORT-1103` Validasi extension/size client tanpa menggantikan server validation.
+- [x] `IMPORT-1104` Implementasikan batch detail dan bounded polling saat processing.
+- [x] `IMPORT-1105` Port row table, visible selection, select-all semantics, dan result summary.
+- [x] `IMPORT-1106` Implementasikan row edit form/image preview.
+- [x] `IMPORT-1107` Implementasikan selection patch dan bulk apply.
+- [x] `IMPORT-1108` Implementasikan row retry dan retry status.
+- [x] `IMPORT-1109` Implementasikan finalize confirmation/idempotency.
+- [x] `IMPORT-1110` Tangani partial failure, stale batch, invalid row, missing staged image, dan expired artifact.
+- [x] `IMPORT-1111` E2E upload-to-finalize dengan success dan partial failure fixture.
 
 ### Export
 
-- [ ] `EXPORT-1120` Implementasikan export dataset query/filter/pagination.
-- [ ] `EXPORT-1121` Port export configuration profiles/columns.
-- [ ] `EXPORT-1122` Implementasikan selection semantics yang tidak ambigu lintas page/filter.
-- [ ] `EXPORT-1123` Implementasikan preview endpoint dan limit warning.
-- [ ] `EXPORT-1124` Implementasikan create export run dengan idempotency/double-click protection.
-- [ ] `EXPORT-1125` Implementasikan running jobs list dan bounded polling.
-- [ ] `EXPORT-1126` Implementasikan completed/failed/retry states.
-- [ ] `EXPORT-1127` Implementasikan authorized download/expired file behavior.
-- [ ] `EXPORT-1128` Sinkronkan completion dengan notification query.
-- [ ] `EXPORT-1129` E2E synchronous dan queued export path.
+- [x] `EXPORT-1120` Implementasikan export dataset query/filter/pagination.
+- [x] `EXPORT-1121` Port export configuration profiles/columns.
+- [x] `EXPORT-1122` Implementasikan selection semantics yang tidak ambigu lintas page/filter.
+- [x] `EXPORT-1123` Implementasikan preview endpoint dan limit warning.
+- [x] `EXPORT-1124` Implementasikan create export run dengan idempotency/double-click protection.
+- [x] `EXPORT-1125` Implementasikan running jobs list dan bounded polling.
+- [x] `EXPORT-1126` Implementasikan completed/failed/retry states.
+- [x] `EXPORT-1127` Implementasikan authorized download/expired file behavior.
+- [x] `EXPORT-1128` Sinkronkan completion dengan notification query.
+- [x] `EXPORT-1129` E2E synchronous dan queued export path.
 
 Quality gate Phase 11:
 
-- [ ] `GATE-11` Import/export flow berhasil untuk file realistis, job panjang, retry, partial failure, refresh page, dan expired artifacts.
+- [x] `GATE-11` Import/export flow berhasil untuk file realistis, job panjang, retry, partial failure, refresh page, dan expired artifacts.
 
 ## Phase 12 — Profile, settings, activity log, notifications, dan backup
 
 ### Profile dan settings
 
-- [ ] `SYS-1201` Implementasikan current profile update.
-- [ ] `SYS-1202` Implementasikan password update dengan current-password error.
-- [ ] `SYS-1203` Implementasikan settings query/update/logo upload.
-- [ ] `SYS-1204` Putuskan behavior `primary_color`: logo accent saja atau runtime palette tervalidasi.
-- [ ] `SYS-1205` Implementasikan system-mode transitions dan maintenance response.
-- [ ] `SYS-1206` Implementasikan clear-cache confirmation dan result feedback.
+- [x] `SYS-1201` Implementasikan current profile update.
+- [x] `SYS-1202` Implementasikan password update dengan current-password error.
+- [x] `SYS-1203` Implementasikan settings query/update/logo upload.
+- [x] `SYS-1204` Putuskan behavior `primary_color`: logo accent saja atau runtime palette tervalidasi.
+- [x] `SYS-1205` Implementasikan system-mode transitions dan maintenance response.
+- [x] `SYS-1206` Implementasikan clear-cache confirmation dan result feedback.
 
 ### Activity logs dan notifications
 
-- [ ] `SYS-1210` Implementasikan activity log list/filter/pagination.
-- [ ] `SYS-1211` Implementasikan activity detail dan safe before/after rendering.
-- [ ] `SYS-1212` Redact field sensitif pada API dan UI.
-- [ ] `SYS-1213` Implementasikan notification list/unread count.
-- [ ] `SYS-1214` Implementasikan mark-one/mark-all-read.
-- [ ] `SYS-1215` Evaluasi polling vs real-time berdasarkan volume dan latency requirement.
+- [x] `SYS-1210` Implementasikan activity log list/filter/pagination.
+- [x] `SYS-1211` Implementasikan activity detail dan safe before/after rendering.
+- [x] `SYS-1212` Redact field sensitif pada API dan UI.
+- [x] `SYS-1213` Implementasikan notification list/unread count.
+- [x] `SYS-1214` Implementasikan mark-one/mark-all-read.
+- [x] `SYS-1215` Evaluasi polling vs real-time berdasarkan volume dan latency requirement.
 
 ### Backup high-risk flow
 
-- [ ] `BACKUP-1220` Definisikan threat model dan authorization matrix backup.
-- [ ] `BACKUP-1221` Implementasikan artifact catalog/status query.
-- [ ] `BACKUP-1222` Implementasikan database/uploads backup creation.
-- [ ] `BACKUP-1223` Implementasikan import dengan file validation/progress.
-- [ ] `BACKUP-1224` Implementasikan verification dan tampilkan checksum/size/status.
-- [ ] `BACKUP-1225` Implementasikan authorized download.
-- [ ] `BACKUP-1226` Implementasikan delete dengan exact artifact confirmation.
-- [ ] `BACKUP-1227` Implementasikan restore uploads dengan step-up/high-friction confirmation.
-- [ ] `BACKUP-1228` Jangan expose database restore UI sebelum backend flag dan runbook resmi tersedia.
-- [ ] `BACKUP-1229` Uji expired, corrupt, signature mismatch, disabled restore, insufficient permission, dan double submit.
-- [ ] `BACKUP-1230` E2E backup flow pada environment disposable, bukan production data.
+- [x] `BACKUP-1220` Definisikan threat model dan authorization matrix backup.
+- [x] `BACKUP-1221` Implementasikan artifact catalog/status query.
+- [x] `BACKUP-1222` Implementasikan database/uploads backup creation.
+- [x] `BACKUP-1223` Implementasikan import dengan file validation/progress.
+- [x] `BACKUP-1224` Implementasikan verification dan tampilkan checksum/size/status.
+- [x] `BACKUP-1225` Implementasikan authorized download.
+- [x] `BACKUP-1226` Implementasikan delete dengan exact artifact confirmation.
+- [x] `BACKUP-1227` Implementasikan restore uploads dengan step-up/high-friction confirmation.
+- [x] `BACKUP-1228` Jangan expose database restore UI sebelum backend flag dan runbook resmi tersedia.
+- [x] `BACKUP-1229` Uji expired, corrupt, signature mismatch, disabled restore, insufficient permission, dan double submit.
+- [x] `BACKUP-1230` E2E backup flow pada environment disposable, bukan production data.
 
 Quality gate Phase 12:
 
-- [ ] `GATE-12` Semua system flow mencapai parity; backup/restore memiliki audit, permission, safety confirmation, dan runbook operasional.
+- [x] `GATE-12` Semua system flow mencapai parity; backup/restore memiliki audit, permission, safety confirmation, dan runbook operasional.
 
 ## Phase 13 — Hardening lintas aplikasi
 
@@ -583,14 +587,14 @@ Isi tabel ini pada setiap planning/release review.
 | 1 API prerequisites | Not started |  |  | `GATE-01` |  |
 | 2 Scaffold | In progress | Frontend |  | `GATE-02` | FE-0220/preview deploy dan OpenAPI artifact menunggu infrastructure/backend. |
 | 3 Design foundation | Complete | Frontend | 2026-08-26 | `GATE-03` | Typed primitives/patterns, axe tests, responsive showcase, dan visual snapshots selesai. |
-| 4 Auth/shell | Not started |  |  | `GATE-04` |  |
+| 4 Auth/shell | In progress | Frontend |  | `GATE-04` | Auth session, router canonical, guard tests, dan app layout aktif. |
 | 5 Domain utilities | Not started |  |  | `GATE-05` |  |
-| 6 Pembanding | Not started |  |  | `GATE-06` |  |
+| 6 Pembanding | Complete | Frontend | 2026-09-06 | `GATE-06` | Alur daftar, detail, tambah/edit, upload foto, validasi Zod/422, duplikat review, historis, dan e2e selesai. Lihat PEMBANDING.md. |
 | 7 Dashboard/search | In progress | Frontend |  | `GATE-07` | Widget dashboard tersedia; pengukuran data nyata, keselarasan schema API, dan global search masih terbuka. Lihat DASHBOARD.md. |
-| 8 Master/geo | Not started |  |  | `GATE-08` |  |
-| 9 Identity/access | Not started |  |  | `GATE-09` |  |
-| 10 Moderation | Not started |  |  | `GATE-10` |  |
-| 11 Import/export | Not started |  |  | `GATE-11` |  |
-| 12 System modules | Not started |  |  | `GATE-12` |  |
+| 8 Master/geo | Complete | Frontend | 2026-09-07 | `GATE-08` | Master data listing, modal CRUD, cascading wilayah, dan map coordinates selesai. |
+| 9 Identity/access | Complete | Frontend | 2026-09-07 | `GATE-09` | User management, access control RBAC matrix, dan alur undangan kontributor selesai. |
+| 10 Moderation | Complete | Frontend | 2026-09-07 | `GATE-10` | Antrean moderasi requests/trash, approve/reject/restore/force delete, conflict handling, unit & e2e tests selesai. |
+| 11 Import/export | Complete | Frontend | 2026-09-07 | `GATE-11` | Bulk Excel import staging/edit/finalize, sync/async export queue history, dan e2e tests selesai. |
+| 12 System modules | Complete | Frontend | 2026-09-07 | `GATE-12` | Profile, settings, activity logs, notifications center, backup catalog, dan upload restore selesai. |
 | 13 Hardening | Not started |  |  | `GATE-13` |  |
 | 14 Cutover | Not started |  |  | `GATE-14` |  |
