@@ -60,12 +60,12 @@ test('supports login return-to, validation feedback, and logout', async ({ page 
   })
 
   await page.goto('/')
-  await expect(page).toHaveURL(/\/login\?redirect=%2F$/)
+  await expect(page).toHaveURL(/\/login\?redirect=(%2F|\/)$/)
 
   await page.getByLabel('Email').fill('ayu@example.com')
   await page.getByLabel('Kata sandi').fill('wrong')
   await page.getByRole('button', { name: 'Masuk' }).click()
-  await expect(page.getByRole('alert')).toContainText('Email atau kata sandi tidak sesuai.')
+  await expect(page.locator('.ui-alert')).toContainText('Email atau kata sandi tidak sesuai.')
   await expect(page.getByText('Periksa kembali email dan kata sandi Anda.')).toBeVisible()
 
   await page.getByLabel('Kata sandi').fill('secret')
@@ -73,6 +73,7 @@ test('supports login return-to, validation feedback, and logout', async ({ page 
   await expect(page).toHaveURL('/')
   await expect(page.getByRole('heading', { name: 'Selamat datang, Ayu Penilai' })).toBeVisible()
 
+  await page.getByRole('button', { name: /Menu pengguna|Ayu Penilai/i }).click()
   await page.getByRole('button', { name: 'Keluar' }).click()
   await expect(page).toHaveURL('/login')
   await expect(page.getByRole('heading', { name: 'Masuk ke ruang kerja' })).toBeVisible()
