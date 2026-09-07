@@ -130,11 +130,7 @@ function handleClose() {
     @close="handleClose"
   >
     <form class="wilayah-dialog" @submit.prevent="handleSubmit">
-      <UiInlineAlert
-        v-if="validationError || error"
-        tone="error"
-        title="Terjadi kesalahan"
-      >
+      <UiInlineAlert v-if="validationError || error" tone="error" title="Terjadi kesalahan">
         <p>{{ validationError || error }}</p>
       </UiInlineAlert>
 
@@ -157,11 +153,7 @@ function handleClose() {
       </UiField>
 
       <!-- If creating Regency: select Province -->
-      <UiField
-        v-if="!isEdit && resource === 'regencies'"
-        label="Provinsi Induk"
-        required
-      >
+      <UiField v-if="!isEdit && resource === 'regencies'" label="Provinsi Induk" required>
         <select
           v-model="selectedProvinceId"
           class="wilayah-dialog__select"
@@ -169,22 +161,14 @@ function handleClose() {
           data-testid="wilayah-parent-select"
         >
           <option value="" disabled>Pilih Provinsi...</option>
-          <option
-            v-for="opt in options?.provinces"
-            :key="opt.id"
-            :value="opt.id"
-          >
+          <option v-for="opt in options?.provinces" :key="opt.id" :value="opt.id">
             {{ opt.id }} - {{ opt.name }}
           </option>
         </select>
       </UiField>
 
       <!-- If creating District: select Regency -->
-      <UiField
-        v-if="!isEdit && resource === 'districts'"
-        label="Kabupaten / Kota Induk"
-        required
-      >
+      <UiField v-if="!isEdit && resource === 'districts'" label="Kabupaten / Kota Induk" required>
         <select
           v-model="selectedRegencyId"
           class="wilayah-dialog__select"
@@ -192,22 +176,14 @@ function handleClose() {
           data-testid="wilayah-parent-select"
         >
           <option value="" disabled>Pilih Kabupaten/Kota...</option>
-          <option
-            v-for="opt in options?.regencies"
-            :key="opt.id"
-            :value="opt.id"
-          >
+          <option v-for="opt in options?.regencies" :key="opt.id" :value="opt.id">
             {{ opt.id }} - {{ opt.name }}
           </option>
         </select>
       </UiField>
 
       <!-- If creating Village: select District -->
-      <UiField
-        v-if="!isEdit && resource === 'villages'"
-        label="Kecamatan Induk"
-        required
-      >
+      <UiField v-if="!isEdit && resource === 'villages'" label="Kecamatan Induk" required>
         <select
           v-model="selectedDistrictId"
           class="wilayah-dialog__select"
@@ -215,11 +191,7 @@ function handleClose() {
           data-testid="wilayah-parent-select"
         >
           <option value="" disabled>Pilih Kecamatan...</option>
-          <option
-            v-for="opt in options?.districts"
-            :key="opt.id"
-            :value="opt.id"
-          >
+          <option v-for="opt in options?.districts" :key="opt.id" :value="opt.id">
             {{ opt.id }} - {{ opt.name }}
           </option>
         </select>
@@ -240,13 +212,7 @@ function handleClose() {
 
     <template #footer>
       <div class="wilayah-dialog__footer">
-        <UiButton
-          variant="secondary"
-          :disabled="busy"
-          @click="handleClose"
-        >
-          Batal
-        </UiButton>
+        <UiButton variant="secondary" :disabled="busy" @click="handleClose"> Batal </UiButton>
         <UiButton
           variant="primary"
           :loading="busy"
@@ -279,7 +245,9 @@ function handleClose() {
   font-size: 0.875rem;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .wilayah-dialog__input:focus,

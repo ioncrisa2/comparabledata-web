@@ -105,7 +105,8 @@ describe('WilayahPage', () => {
         stubs: {
           UiDialog: {
             props: ['open', 'title'],
-            template: '<div v-if="open" class="dialog-mock"><h3>{{ title }}</h3><slot /><slot name="footer" /></div>',
+            template:
+              '<div v-if="open" class="dialog-mock"><h3>{{ title }}</h3><slot /><slot name="footer" /></div>',
           },
           UiConfirmDialog: {
             props: ['open', 'title'],
@@ -121,12 +122,7 @@ describe('WilayahPage', () => {
       name: 'Admin Wilayah',
       email: 'admin@sysinfo.id',
       roles: ['super_admin'],
-      permissions: [
-        'view_geo_data',
-        'create_geo_data',
-        'update_geo_data',
-        'delete_geo_data',
-      ],
+      permissions: ['view_geo_data', 'create_geo_data', 'update_geo_data', 'delete_geo_data'],
       created_at: null,
       updated_at: null,
     }
@@ -152,9 +148,9 @@ describe('WilayahPage', () => {
     const wrapper = createWrapper()
     await router.isReady()
 
-    const regenciesTabBtn = wrapper.findAll('.wilayah-page__tab-btn').find((btn) =>
-      btn.text().includes('Kabupaten / Kota'),
-    )
+    const regenciesTabBtn = wrapper
+      .findAll('.wilayah-page__tab-btn')
+      .find((btn) => btn.text().includes('Kabupaten / Kota'))
     expect(regenciesTabBtn).toBeDefined()
     await regenciesTabBtn!.trigger('click')
 

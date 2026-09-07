@@ -3,12 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 import { mockServer } from '@/test/mocks/server'
 
-import {
-  createWilayah,
-  deleteWilayah,
-  fetchWilayahList,
-  updateWilayah,
-} from './wilayah.api'
+import { createWilayah, deleteWilayah, fetchWilayahList, updateWilayah } from './wilayah.api'
 
 describe('Wilayah API', () => {
   it('fetches provinces list with metadata and stats', async () => {

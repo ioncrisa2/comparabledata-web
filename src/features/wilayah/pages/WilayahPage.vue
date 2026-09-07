@@ -84,10 +84,7 @@ const queryParams = computed<WilayahFilterParams>(() => ({
 }))
 
 // Query
-const { data: response, isLoading, isError } = useWilayahListQuery(
-  currentResource,
-  queryParams,
-)
+const { data: response, isLoading, isError } = useWilayahListQuery(currentResource, queryParams)
 
 const items = computed<WilayahItem[]>(() => response.value?.data ?? [])
 const meta = computed(() => response.value?.meta)
@@ -219,15 +216,12 @@ function handlePageChange(newPage: number) {
         <div>
           <h1 class="wilayah-page__title">Manajemen Wilayah</h1>
           <p class="wilayah-page__desc">
-            Kelola data wilayah administratif 4 tingkat: Provinsi, Kabupaten/Kota, Kecamatan, dan Desa/Kelurahan.
+            Kelola data wilayah administratif 4 tingkat: Provinsi, Kabupaten/Kota, Kecamatan, dan
+            Desa/Kelurahan.
           </p>
         </div>
         <div v-if="canCreate">
-          <UiButton
-            variant="primary"
-            data-testid="wilayah-add-btn"
-            @click="openCreateDialog"
-          >
+          <UiButton variant="primary" data-testid="wilayah-add-btn" @click="openCreateDialog">
             <template #icon><i class="pi pi-plus" aria-hidden="true" /></template>
             Tambah {{ resourceMeta?.singular || 'Wilayah' }}
           </UiButton>
@@ -263,7 +257,9 @@ function handlePageChange(newPage: number) {
           </div>
         </div>
         <div class="wilayah-page__stat-card">
-          <div class="wilayah-page__stat-icon"><i class="pi pi-map-marker" aria-hidden="true" /></div>
+          <div class="wilayah-page__stat-icon">
+            <i class="pi pi-map-marker" aria-hidden="true" />
+          </div>
           <div>
             <span class="wilayah-page__stat-value">{{ formatNumber(stats.districts) }}</span>
             <span class="wilayah-page__stat-label">Kecamatan</span>
@@ -313,7 +309,10 @@ function handlePageChange(newPage: number) {
 
           <!-- Parent Filters based on active level -->
           <!-- Province filter for Regencies, Districts, Villages -->
-          <div v-if="currentResource !== 'provinces' && options?.provinces" class="wilayah-page__select-wrapper">
+          <div
+            v-if="currentResource !== 'provinces' && options?.provinces"
+            class="wilayah-page__select-wrapper"
+          >
             <select
               v-model="selectedProvinceId"
               class="wilayah-page__filter-select"
@@ -327,7 +326,10 @@ function handlePageChange(newPage: number) {
           </div>
 
           <!-- Regency filter for Districts, Villages -->
-          <div v-if="['districts', 'villages'].includes(currentResource) && options?.regencies" class="wilayah-page__select-wrapper">
+          <div
+            v-if="['districts', 'villages'].includes(currentResource) && options?.regencies"
+            class="wilayah-page__select-wrapper"
+          >
             <select
               v-model="selectedRegencyId"
               class="wilayah-page__filter-select"
@@ -341,7 +343,10 @@ function handlePageChange(newPage: number) {
           </div>
 
           <!-- District filter for Villages -->
-          <div v-if="currentResource === 'villages' && options?.districts" class="wilayah-page__select-wrapper">
+          <div
+            v-if="currentResource === 'villages' && options?.districts"
+            class="wilayah-page__select-wrapper"
+          >
             <select
               v-model="selectedDistrictId"
               class="wilayah-page__filter-select"
@@ -373,11 +378,11 @@ function handlePageChange(newPage: number) {
           <table>
             <thead>
               <tr>
-                <th style="width: 140px;">Kode Wilayah</th>
+                <th style="width: 140px">Kode Wilayah</th>
                 <th>Nama Wilayah</th>
                 <th v-if="resourceMeta?.parent_label">{{ resourceMeta.parent_label }}</th>
                 <th v-if="resourceMeta?.children_label">{{ resourceMeta.children_label }}</th>
-                <th style="width: 120px;" class="text-right">Aksi</th>
+                <th style="width: 120px" class="text-right">Aksi</th>
               </tr>
             </thead>
             <tbody>

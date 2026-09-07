@@ -18,8 +18,7 @@ export function useWilayahListQuery(
 ) {
   return useQuery({
     queryKey: ['wilayah-list', resource, params],
-    queryFn: ({ signal }) =>
-      fetchWilayahList(unref(resource), unref(params), { signal }),
+    queryFn: ({ signal }) => fetchWilayahList(unref(resource), unref(params), { signal }),
     staleTime: 30_000,
   })
 }
@@ -28,8 +27,7 @@ export function useCreateWilayahMutation(resource: Ref<WilayahResource> | Wilaya
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (payload: CreateWilayahPayload) =>
-      createWilayah(unref(resource), payload),
+    mutationFn: (payload: CreateWilayahPayload) => createWilayah(unref(resource), payload),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['wilayah-list'] })
       void queryClient.invalidateQueries({ queryKey: ['locations'] })
