@@ -50,13 +50,11 @@ export function useUpdateRoleMutation() {
   return useMutation({
     mutationFn: ({ id, payload }: { id: number | string; payload: UpdateRolePayload }) =>
       updateRole(id, payload),
-    onSuccess: (data) => {
-      void queryClient.invalidateQueries({ queryKey: ['roles'] })
-      void queryClient.invalidateQueries({ queryKey: ['role-options'] })
-      void queryClient.invalidateQueries({ queryKey: ['users'] })
-      if (auth.user?.roles?.includes(data.name)) {
-        void auth.initialize()
-      }
+    onSuccess: async () => {
+      // The role may have been renamed; reload effective access instead of comparing names.
+      await auth.initialize({ force: true })
+      // Cached feature data may also depend on the permissions that just changed.
+      void queryClient.invalidateQueries()
     },
   })
 }

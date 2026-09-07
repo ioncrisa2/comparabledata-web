@@ -14,7 +14,9 @@ import AccessControlPage from './AccessControlPage.vue'
 describe('AccessControlPage', () => {
   const router = createRouter({
     history: createWebHistory(),
-    routes: [{ path: '/access-control', name: 'access-control.index', component: AccessControlPage }],
+    routes: [
+      { path: '/access-control', name: 'access-control.index', component: AccessControlPage },
+    ],
   })
 
   beforeEach(async () => {
@@ -85,7 +87,8 @@ describe('AccessControlPage', () => {
         stubs: {
           UiDialog: {
             props: ['open', 'title'],
-            template: '<div v-if="open" class="dialog-mock"><h3>{{ title }}</h3><slot /><slot name="footer" /></div>',
+            template:
+              '<div v-if="open" class="dialog-mock"><h3>{{ title }}</h3><slot /><slot name="footer" /></div>',
           },
           UiConfirmDialog: {
             props: ['open', 'title'],
@@ -141,9 +144,9 @@ describe('AccessControlPage', () => {
     const wrapper = createWrapper()
     await router.isReady()
 
-    const permTabBtn = wrapper.findAll('.access-control-page__tab-btn').find((btn) =>
-      btn.text().includes('Izin Akses'),
-    )
+    const permTabBtn = wrapper
+      .findAll('.access-control-page__tab-btn')
+      .find((btn) => btn.text().includes('Izin Akses'))
     expect(permTabBtn).toBeDefined()
     await permTabBtn!.trigger('click')
 

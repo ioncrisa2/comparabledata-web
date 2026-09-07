@@ -46,7 +46,8 @@ function validate(): boolean {
   }
 
   if (!/^[A-Za-z0-9_:-]+$/.test(trimmed)) {
-    nameError.value = 'Permission hanya boleh memakai huruf, angka, underscore, titik dua, atau strip.'
+    nameError.value =
+      'Permission hanya boleh memakai huruf, angka, underscore, titik dua, atau strip.'
     return false
   }
 

@@ -6,7 +6,12 @@ import UiDialog from '@/shared/components/ui/UiDialog.vue'
 import UiField from '@/shared/components/ui/UiField.vue'
 import UiInlineAlert from '@/shared/components/ui/UiInlineAlert.vue'
 
-import type { CreateRolePayload, PermissionItem, RoleItem, UpdateRolePayload } from '../api/access-control.api'
+import type {
+  CreateRolePayload,
+  PermissionItem,
+  RoleItem,
+  UpdateRolePayload,
+} from '../api/access-control.api'
 
 const props = defineProps<{
   open: boolean
@@ -117,7 +122,11 @@ function selectAllFiltered() {
 }
 
 function deselectAllFiltered() {
-  const allFilteredNames = new Set(Object.values(groupedPermissions.value).flat().map((p) => p.name))
+  const allFilteredNames = new Set(
+    Object.values(groupedPermissions.value)
+      .flat()
+      .map((p) => p.name),
+  )
   form.selectedPermissions = form.selectedPermissions.filter((p) => !allFilteredNames.has(p))
 }
 
@@ -151,12 +160,7 @@ function handleSubmit() {
 </script>
 
 <template>
-  <UiDialog
-    :open="open"
-    :title="dialogTitle"
-    width="lg"
-    @update:open="emit('update:open', $event)"
-  >
+  <UiDialog :open="open" :title="dialogTitle" width="lg" @update:open="emit('update:open', $event)">
     <form class="role-dialog__form" @submit.prevent="handleSubmit">
       <UiInlineAlert
         v-if="error"
@@ -171,7 +175,11 @@ function handleSubmit() {
         label="Nama Role / Peran"
         required
         :error="nameError"
-        :help="isLocked ? 'Role sistem bawaan (super_admin). Nama tidak dapat diubah.' : 'Gunakan huruf kecil dan pemisah underscore atau strip (contoh: staff_penilai, verifikator).'"
+        :help="
+          isLocked
+            ? 'Role sistem bawaan (super_admin). Nama tidak dapat diubah.'
+            : 'Gunakan huruf kecil dan pemisah underscore atau strip (contoh: staff_penilai, verifikator).'
+        "
       >
         <input
           v-model="form.name"
@@ -190,7 +198,8 @@ function handleSubmit() {
             <h3 class="role-dialog__section-title">Matriks Izin Akses (Permissions)</h3>
             <p class="role-dialog__section-desc">
               Pilih izin operasional yang diberikan kepada pengguna dengan role ini.
-              <strong>{{ form.selectedPermissions.length }}</strong> dari {{ permissions.length }} izin terpilih.
+              <strong>{{ form.selectedPermissions.length }}</strong> dari
+              {{ permissions.length }} izin terpilih.
             </p>
           </div>
 
@@ -218,16 +227,16 @@ function handleSubmit() {
 
         <!-- Grouped permissions list -->
         <div class="role-dialog__groups-container">
-          <div
-            v-for="groupKey in sortedGroupKeys"
-            :key="groupKey"
-            class="role-dialog__group-card"
-          >
+          <div v-for="groupKey in sortedGroupKeys" :key="groupKey" class="role-dialog__group-card">
             <div class="role-dialog__group-header">
               <div class="role-dialog__group-info">
                 <span class="role-dialog__group-title">{{ groupKey }}</span>
                 <span class="role-dialog__group-count">
-                  {{ groupedPermissions[groupKey]!.filter(p => form.selectedPermissions.includes(p.name)).length }}/{{ groupedPermissions[groupKey]!.length }}
+                  {{
+                    groupedPermissions[groupKey]!.filter((p) =>
+                      form.selectedPermissions.includes(p.name),
+                    ).length
+                  }}/{{ groupedPermissions[groupKey]!.length }}
                 </span>
               </div>
               <button
@@ -235,7 +244,11 @@ function handleSubmit() {
                 class="role-dialog__group-toggle-btn"
                 @click="toggleGroup(groupedPermissions[groupKey]!)"
               >
-                {{ isGroupAllSelected(groupedPermissions[groupKey]!) ? 'Batalkan Semua' : 'Pilih Semua' }}
+                {{
+                  isGroupAllSelected(groupedPermissions[groupKey]!)
+                    ? 'Batalkan Semua'
+                    : 'Pilih Semua'
+                }}
               </button>
             </div>
 
@@ -244,7 +257,9 @@ function handleSubmit() {
                 v-for="perm in groupedPermissions[groupKey]"
                 :key="perm.name"
                 class="role-dialog__perm-item"
-                :class="{ 'role-dialog__perm-item--checked': form.selectedPermissions.includes(perm.name) }"
+                :class="{
+                  'role-dialog__perm-item--checked': form.selectedPermissions.includes(perm.name),
+                }"
               >
                 <input
                   type="checkbox"
@@ -419,6 +434,7 @@ function handleSubmit() {
 }
 
 .role-dialog__group-card {
+  flex-shrink: 0;
   border: 1px solid var(--color-border-soft);
   border-radius: var(--radius-card);
   background: var(--color-surface);
@@ -474,7 +490,7 @@ function handleSubmit() {
 
 .role-dialog__perms-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
   gap: 6px;
   padding: 10px 12px;
 }

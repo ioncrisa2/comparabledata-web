@@ -49,9 +49,7 @@ function unwrapError(error: unknown, fallbackAction: string): ApiError {
   return invalidResponse(fallbackAction)
 }
 
-export async function fetchRoles(
-  options: { signal?: AbortSignal } = {},
-): Promise<RoleItem[]> {
+export async function fetchRoles(options: { signal?: AbortSignal } = {}): Promise<RoleItem[]> {
   const response = await apiClient.GET('/v1/roles', {
     signal: options.signal,
   })

@@ -392,11 +392,11 @@ const actionAlert = ref<{ message: string; tone: 'success' | 'error' } | null>(n
             <table>
               <thead>
                 <tr>
-                  <th style="width: 200px;">Nama Peran</th>
-                  <th style="width: 140px;">Pengguna</th>
-                  <th style="width: 150px;">Total Izin</th>
+                  <th style="width: 200px">Nama Peran</th>
+                  <th style="width: 140px">Pengguna</th>
+                  <th style="width: 150px">Total Izin</th>
                   <th>Cakupan Hak Akses</th>
-                  <th style="width: 110px;" class="text-right">Aksi</th>
+                  <th style="width: 110px" class="text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -404,7 +404,11 @@ const actionAlert = ref<{ message: string; tone: 'success' | 'error' } | null>(n
                   <td>
                     <div class="access-control-page__role-cell">
                       <strong class="access-control-page__role-name">{{ role.name }}</strong>
-                      <span v-if="role.is_locked" class="access-control-page__lock-badge" title="Role sistem bawaan tidak dapat dihapus">
+                      <span
+                        v-if="role.is_locked"
+                        class="access-control-page__lock-badge"
+                        title="Role sistem bawaan tidak dapat dihapus"
+                      >
                         <i class="pi pi-lock" aria-hidden="true" /> Sistem
                       </span>
                     </div>
@@ -436,7 +440,10 @@ const actionAlert = ref<{ message: string; tone: 'success' | 'error' } | null>(n
                       >
                         +{{ role.permissions.length - 3 }} lainnya
                       </span>
-                      <span v-else-if="role.permissions.length === 0" class="access-control-page__empty-perms">
+                      <span
+                        v-else-if="role.permissions.length === 0"
+                        class="access-control-page__empty-perms"
+                      >
                         Belum ada izin
                       </span>
                     </div>
@@ -458,7 +465,13 @@ const actionAlert = ref<{ message: string; tone: 'success' | 'error' } | null>(n
                         type="button"
                         class="access-control-page__action-btn access-control-page__action-btn--danger"
                         :disabled="role.is_locked || role.users_count > 0"
-                        :title="role.is_locked ? 'Role sistem bawaan tidak dapat dihapus' : role.users_count > 0 ? 'Role masih digunakan oleh pengguna' : 'Hapus role'"
+                        :title="
+                          role.is_locked
+                            ? 'Role sistem bawaan tidak dapat dihapus'
+                            : role.users_count > 0
+                              ? 'Role masih digunakan oleh pengguna'
+                              : 'Hapus role'
+                        "
                         data-testid="role-delete-btn"
                         @click="confirmDeleteRole(role)"
                       >
@@ -522,10 +535,10 @@ const actionAlert = ref<{ message: string; tone: 'success' | 'error' } | null>(n
               <thead>
                 <tr>
                   <th>Nama Permission</th>
-                  <th style="width: 200px;">Grup / Modul</th>
-                  <th style="width: 140px;">Dipakai Role</th>
-                  <th style="width: 140px;">Pengguna Terkait</th>
-                  <th style="width: 90px;" class="text-right">Aksi</th>
+                  <th style="width: 200px">Grup / Modul</th>
+                  <th style="width: 140px">Dipakai Role</th>
+                  <th style="width: 140px">Pengguna Terkait</th>
+                  <th style="width: 90px" class="text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -539,9 +552,7 @@ const actionAlert = ref<{ message: string; tone: 'success' | 'error' } | null>(n
                     </span>
                   </td>
                   <td>
-                    <span class="access-control-page__stat-num">
-                      {{ perm.roles_count }} role
-                    </span>
+                    <span class="access-control-page__stat-num"> {{ perm.roles_count }} role </span>
                   </td>
                   <td>
                     <span class="access-control-page__stat-num">
@@ -555,7 +566,13 @@ const actionAlert = ref<{ message: string; tone: 'success' | 'error' } | null>(n
                         type="button"
                         class="access-control-page__action-btn access-control-page__action-btn--danger"
                         :disabled="perm.is_locked || perm.roles_count > 0 || perm.users_count > 0"
-                        :title="perm.is_locked ? 'Permission sistem tidak dapat dihapus' : (perm.roles_count > 0 || perm.users_count > 0) ? 'Permission masih terpasang pada role atau pengguna' : 'Hapus permission'"
+                        :title="
+                          perm.is_locked
+                            ? 'Permission sistem tidak dapat dihapus'
+                            : perm.roles_count > 0 || perm.users_count > 0
+                              ? 'Permission masih terpasang pada role atau pengguna'
+                              : 'Hapus permission'
+                        "
                         data-testid="permission-delete-btn"
                         @click="confirmDeletePerm(perm)"
                       >
@@ -594,7 +611,8 @@ const actionAlert = ref<{ message: string; tone: 'success' | 'error' } | null>(n
       @confirm="handleDeleteRole"
     >
       <p>
-        Apakah Anda yakin ingin menghapus role <strong>{{ deletingRole?.name }}</strong>?
+        Apakah Anda yakin ingin menghapus role <strong>{{ deletingRole?.name }}</strong
+        >?
       </p>
     </UiConfirmDialog>
 
@@ -619,7 +637,8 @@ const actionAlert = ref<{ message: string; tone: 'success' | 'error' } | null>(n
       @confirm="handleDeletePermission"
     >
       <p>
-        Apakah Anda yakin ingin menghapus permission <code>{{ deletingPerm?.name }}</code>?
+        Apakah Anda yakin ingin menghapus permission <code>{{ deletingPerm?.name }}</code
+        >?
       </p>
     </UiConfirmDialog>
   </div>
