@@ -18,6 +18,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:open': [value: boolean]
   success: []
+  conflict: [message: string]
 }>()
 
 const mutation = useRejectDeleteRequestMutation()
@@ -37,16 +38,25 @@ function validate(): boolean {
 async function submit() {
   if (!props.requestId || !validate()) return
 
-  await mutation.mutateAsync(
-    { id: props.requestId, reviewNote: reviewNote.value.trim() },
-    {
-      onSuccess: () => {
-        emit('success')
-        emit('update:open', false)
-        reviewNote.value = ''
-      },
-    },
-  )
+  try {
+    await mutation.mutateAsync({
+      id: props.requestId,
+      reviewNote: reviewNote.value.trim(),
+    })
+    emit('success')
+    emit('update:open', false)
+    reviewNote.value = ''
+  } catch (error) {
+    if (
+      isApiError(error) &&
+      (error.code === 'ALREADY_PROCESSED' ||
+        error.status === 422 ||
+        error.status === 404 ||
+        error.message.toLowerCase().includes('sudah diproses'))
+    ) {
+      emit('conflict', error.message)
+    }
+  }
 }
 
 function close() {
@@ -92,11 +102,7 @@ function close() {
         </template>
       </UiField>
 
-      <UiInlineAlert
-        v-if="mutation.isError.value"
-        tone="error"
-        title="Gagal menolak permohonan"
-      >
+      <UiInlineAlert v-if="mutation.isError.value" tone="error" title="Gagal menolak permohonan">
         <p>
           {{
             isApiError(mutation.error.value)

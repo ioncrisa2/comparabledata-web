@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
-import { computed, type MaybeRefOrGetter,toValue } from 'vue'
+import { computed, type MaybeRefOrGetter, toValue } from 'vue'
 
 import { pembandingKeys } from '@/features/pembanding/api/pembanding.keys'
 
@@ -36,6 +36,7 @@ export function useApproveDeleteRequestMutation() {
       void queryClient.invalidateQueries({ queryKey: moderationKeys.all })
       void queryClient.invalidateQueries({ queryKey: pembandingKeys.lists() })
       void queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      void queryClient.invalidateQueries({ queryKey: ['search'] })
     },
   })
 }
@@ -48,6 +49,9 @@ export function useRejectDeleteRequestMutation() {
       rejectDeleteRequest(id, reviewNote),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: moderationKeys.all })
+      void queryClient.invalidateQueries({ queryKey: pembandingKeys.lists() })
+      void queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      void queryClient.invalidateQueries({ queryKey: ['search'] })
     },
   })
 }
@@ -61,6 +65,7 @@ export function useRestorePembandingMutation() {
       void queryClient.invalidateQueries({ queryKey: moderationKeys.all })
       void queryClient.invalidateQueries({ queryKey: pembandingKeys.lists() })
       void queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      void queryClient.invalidateQueries({ queryKey: ['search'] })
     },
   })
 }
@@ -72,7 +77,9 @@ export function useForceDeletePembandingMutation() {
     mutationFn: (id: string | number) => forceDeletePembanding(id),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: moderationKeys.all })
+      void queryClient.invalidateQueries({ queryKey: pembandingKeys.lists() })
       void queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      void queryClient.invalidateQueries({ queryKey: ['search'] })
     },
   })
 }

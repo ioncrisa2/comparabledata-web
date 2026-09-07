@@ -7,7 +7,10 @@ export type ModerationResponse =
 export type ModerationItem = ModerationResponse['data'][number]
 export type ModerationFilters = NonNullable<
   operations['moderation.index']['parameters']['query']
->
+> & {
+  page?: number
+  per_page?: number
+}
 
 function invalidResponse(resource: string): ApiError {
   return new ApiError({
@@ -36,7 +39,9 @@ export interface NormalizedModerationItem {
   raw: unknown
 }
 
-export function normalizeModerationItem(item: Record<string, unknown> | null | undefined): NormalizedModerationItem {
+export function normalizeModerationItem(
+  item: Record<string, unknown> | null | undefined,
+): NormalizedModerationItem {
   if (!item) {
     return {
       id: 0,
@@ -58,36 +63,25 @@ export function normalizeModerationItem(item: Record<string, unknown> | null | u
   const id = Number(item.id ?? 0)
 
   // ID pembanding terkait
-  const pembandingId = Number(
-    p.id ??
-    item.pembanding_id ??
-    item.data_pembanding_id ??
-    item.id ??
-    0,
-  )
+  const pembandingId = Number(p.id ?? item.pembanding_id ?? item.data_pembanding_id ?? item.id ?? 0)
 
   // Alamat data
-  const rawAlamat =
-    p.alamat_data ??
-    p.alamat ??
-    item.alamat_data ??
-    item.alamat ??
-    ''
+  const rawAlamat = p.alamat_data ?? p.alamat ?? item.alamat_data ?? item.alamat ?? ''
   const alamat = toPrimitiveString(rawAlamat).trim()
 
   // Harga
   const rawHarga = p.harga ?? p.harga_penawaran ?? item.harga ?? item.harga_penawaran
   const harga =
-    rawHarga !== null && rawHarga !== undefined && rawHarga !== '' && !Number.isNaN(Number(rawHarga))
+    rawHarga !== null &&
+    rawHarga !== undefined &&
+    rawHarga !== '' &&
+    !Number.isNaN(Number(rawHarga))
       ? Number(rawHarga)
       : null
 
   // Jenis listing
   const rawJl =
-    p.jenis_listing ??
-    item.jenis_listing ??
-    p.jenis_listing_name ??
-    item.jenis_listing_name
+    p.jenis_listing ?? item.jenis_listing ?? p.jenis_listing_name ?? item.jenis_listing_name
   let jenisListing = ''
   if (rawJl) {
     if (typeof rawJl === 'string') {
@@ -175,17 +169,13 @@ export async function fetchModeration(
   throw invalidResponse('data antrean moderasi')
 }
 
-
 export async function approveDeleteRequest(id: string | number): Promise<void> {
   await apiClient.POST('/v1/moderation/delete-requests/{id}/approve', {
     params: { path: { id: String(id) } },
   })
 }
 
-export async function rejectDeleteRequest(
-  id: string | number,
-  reviewNote: string,
-): Promise<void> {
+export async function rejectDeleteRequest(id: string | number, reviewNote: string): Promise<void> {
   await apiClient.POST('/v1/moderation/delete-requests/{id}/reject', {
     params: { path: { id: String(id) } },
     body: { review_note: reviewNote },

@@ -7,15 +7,14 @@ import { isApiError } from '@/shared/api/error'
 import DataTableShell from '@/shared/components/patterns/DataTableShell.vue'
 import UiButton from '@/shared/components/ui/UiButton.vue'
 import UiConfirmDialog from '@/shared/components/ui/UiConfirmDialog.vue'
+import UiDialog from '@/shared/components/ui/UiDialog.vue'
 import UiInlineAlert from '@/shared/components/ui/UiInlineAlert.vue'
+import UiPagination from '@/shared/components/ui/UiPagination.vue'
 import UiStatusBadge from '@/shared/components/ui/UiStatusBadge.vue'
 import UiSurface from '@/shared/components/ui/UiSurface.vue'
 import { formatCurrency, formatDate, formatNumber } from '@/shared/formatters'
 
-import {
-  type NormalizedModerationItem,
-  normalizeModerationItem,
-} from '../api/moderation.api'
+import { type NormalizedModerationItem, normalizeModerationItem } from '../api/moderation.api'
 import RejectDeleteRequestDialog from '../components/RejectDeleteRequestDialog.vue'
 import {
   useApproveDeleteRequestMutation,
@@ -34,17 +33,20 @@ const canReject = computed(() => auth.can('reject_delete_request'))
 const canRestore = computed(() => auth.can('restore_data::pembanding'))
 const canForceDelete = computed(() => auth.can('force_delete_data::pembanding'))
 
-// Active tab & search synced with query params
-const activeTab = computed(() =>
-  route.query.tab === 'trash' ? 'trash' : 'requests',
-)
+// Active tab & search & page synced with URL query parameters
+const activeTab = computed(() => (route.query.tab === 'trash' ? 'trash' : 'requests'))
 const searchQuery = ref(String(route.query.search ?? ''))
+const currentPage = computed(() => {
+  const p = Number(route.query.page)
+  return Number.isInteger(p) && p > 0 ? p : 1
+})
 
 function setTab(tab: 'requests' | 'trash') {
   void router.push({
     query: {
       ...route.query,
       tab: tab === 'requests' ? undefined : tab,
+      page: undefined,
     },
   })
 }
@@ -54,6 +56,16 @@ function handleSearch(val: string) {
     query: {
       ...route.query,
       search: val.trim() || undefined,
+      page: undefined,
+    },
+  })
+}
+
+function handlePageChange(newPage: number) {
+  void router.push({
+    query: {
+      ...route.query,
+      page: newPage > 1 ? String(newPage) : undefined,
     },
   })
 }
@@ -62,6 +74,8 @@ function handleSearch(val: string) {
 const filters = computed(() => ({
   tab: activeTab.value,
   search: String(route.query.search ?? '').trim() || undefined,
+  page: currentPage.value,
+  per_page: 15,
 }))
 
 const moderationQuery = useModerationQuery(filters)
@@ -74,6 +88,8 @@ const rawItems = computed(() => moderationQuery.data.value?.data ?? [])
 const items = computed(() =>
   rawItems.value.map((item) => normalizeModerationItem(item as Record<string, unknown>)),
 )
+const meta = computed(() => moderationQuery.data.value?.meta)
+
 const tableState = computed(() => {
   if (moderationQuery.isPending.value) return 'loading'
   if (moderationQuery.isError.value) return 'error'
@@ -86,9 +102,14 @@ const approveTarget = ref<NormalizedModerationItem | null>(null)
 const rejectTarget = ref<NormalizedModerationItem | null>(null)
 const restoreTarget = ref<NormalizedModerationItem | null>(null)
 const forceDeleteTarget = ref<NormalizedModerationItem | null>(null)
+const forceDeleteConfirmed = ref(false)
 
 // Feedback messages
-const actionMessage = ref<{ title: string; body: string; tone: 'success' | 'error' } | null>(null)
+const actionMessage = ref<{
+  title: string
+  body: string
+  tone: 'success' | 'warning' | 'error'
+} | null>(null)
 
 watch(
   () => route.query,
@@ -96,6 +117,17 @@ watch(
     searchQuery.value = String(route.query.search ?? '')
   },
 )
+
+function isConflictError(err: unknown): boolean {
+  if (!isApiError(err)) return false
+  return (
+    err.code === 'ALREADY_PROCESSED' ||
+    err.status === 422 ||
+    err.status === 404 ||
+    err.message.toLowerCase().includes('sudah diproses') ||
+    err.message.toLowerCase().includes('tidak ditemukan')
+  )
+}
 
 async function confirmApprove() {
   if (!approveTarget.value) return
@@ -108,10 +140,21 @@ async function confirmApprove() {
       tone: 'success',
     }
   } catch (err) {
-    actionMessage.value = {
-      title: 'Gagal menyetujui permohonan',
-      body: isApiError(err) ? err.message : 'Terjadi gangguan sistem.',
-      tone: 'error',
+    if (isConflictError(err)) {
+      actionMessage.value = {
+        title: 'Konflik Moderasi Terdeteksi',
+        body: isApiError(err)
+          ? err.message
+          : 'Permohonan ini telah diproses sebelumnya oleh pengguna lain. Daftar moderasi telah dimuat ulang.',
+        tone: 'warning',
+      }
+      await moderationQuery.refetch()
+    } else {
+      actionMessage.value = {
+        title: 'Gagal menyetujui permohonan',
+        body: isApiError(err) ? err.message : 'Terjadi gangguan sistem.',
+        tone: 'error',
+      }
     }
   } finally {
     approveTarget.value = null
@@ -126,6 +169,16 @@ function onRejectSuccess() {
   }
 }
 
+async function onRejectConflict(message: string) {
+  rejectTarget.value = null
+  actionMessage.value = {
+    title: 'Konflik Moderasi Terdeteksi',
+    body: message || 'Permohonan ini telah diproses sebelumnya oleh pengguna lain.',
+    tone: 'warning',
+  }
+  await moderationQuery.refetch()
+}
+
 async function confirmRestore() {
   if (!restoreTarget.value) return
   const id = restoreTarget.value.pembandingId || restoreTarget.value.id
@@ -137,10 +190,21 @@ async function confirmRestore() {
       tone: 'success',
     }
   } catch (err) {
-    actionMessage.value = {
-      title: 'Gagal memulihkan data',
-      body: isApiError(err) ? err.message : 'Terjadi gangguan sistem.',
-      tone: 'error',
+    if (isConflictError(err)) {
+      actionMessage.value = {
+        title: 'Konflik Moderasi Terdeteksi',
+        body: isApiError(err)
+          ? err.message
+          : 'Data ini telah dipulihkan atau diproses sebelumnya oleh pengguna lain.',
+        tone: 'warning',
+      }
+      await moderationQuery.refetch()
+    } else {
+      actionMessage.value = {
+        title: 'Gagal memulihkan data',
+        body: isApiError(err) ? err.message : 'Terjadi gangguan sistem.',
+        tone: 'error',
+      }
     }
   } finally {
     restoreTarget.value = null
@@ -148,7 +212,7 @@ async function confirmRestore() {
 }
 
 async function confirmForceDelete() {
-  if (!forceDeleteTarget.value) return
+  if (!forceDeleteTarget.value || !forceDeleteConfirmed.value) return
   const id = forceDeleteTarget.value.pembandingId || forceDeleteTarget.value.id
   try {
     await forceDeleteMutation.mutateAsync(id)
@@ -158,14 +222,31 @@ async function confirmForceDelete() {
       tone: 'success',
     }
   } catch (err) {
-    actionMessage.value = {
-      title: 'Gagal menghapus data',
-      body: isApiError(err) ? err.message : 'Terjadi gangguan sistem.',
-      tone: 'error',
+    if (isConflictError(err)) {
+      actionMessage.value = {
+        title: 'Konflik Moderasi Terdeteksi',
+        body: isApiError(err)
+          ? err.message
+          : 'Data ini telah dihapus sebelumnya oleh pengguna lain.',
+        tone: 'warning',
+      }
+      await moderationQuery.refetch()
+    } else {
+      actionMessage.value = {
+        title: 'Gagal menghapus data',
+        body: isApiError(err) ? err.message : 'Terjadi gangguan sistem.',
+        tone: 'error',
+      }
     }
   } finally {
     forceDeleteTarget.value = null
+    forceDeleteConfirmed.value = false
   }
+}
+
+function openForceDeleteDialog(item: NormalizedModerationItem) {
+  forceDeleteTarget.value = item
+  forceDeleteConfirmed.value = false
 }
 
 function onApproveDialogClose(open: boolean) {
@@ -181,10 +262,12 @@ function onRestoreDialogClose(open: boolean) {
 }
 
 function onForceDeleteDialogClose(open: boolean) {
-  if (!open) forceDeleteTarget.value = null
+  if (!open) {
+    forceDeleteTarget.value = null
+    forceDeleteConfirmed.value = false
+  }
 }
 </script>
-
 
 <template>
   <main id="main-content" class="moderation-page" tabindex="-1">
@@ -195,7 +278,7 @@ function onForceDeleteDialogClose(open: boolean) {
       </div>
       <div class="moderation-page__summary" aria-live="polite">
         <span>Jumlah data</span>
-        <strong>{{ formatNumber(moderationQuery.data.value?.meta?.total ?? items.length) }}</strong>
+        <strong>{{ formatNumber(meta?.total ?? items.length) }}</strong>
       </div>
     </header>
 
@@ -205,6 +288,8 @@ function onForceDeleteDialogClose(open: boolean) {
       class="moderation-page__alert"
       :tone="actionMessage.tone"
       :title="actionMessage.title"
+      dismissible
+      @dismiss="actionMessage = null"
     >
       <p>{{ actionMessage.body }}</p>
     </UiInlineAlert>
@@ -245,9 +330,7 @@ function onForceDeleteDialogClose(open: boolean) {
             aria-label="Cari data moderasi"
             @keydown.enter="handleSearch(searchQuery)"
           />
-          <UiButton size="sm" @click="handleSearch(searchQuery)">
-            Cari
-          </UiButton>
+          <UiButton size="sm" @click="handleSearch(searchQuery)"> Cari </UiButton>
         </div>
       </div>
 
@@ -257,9 +340,7 @@ function onForceDeleteDialogClose(open: boolean) {
         :state="tableState"
         :filtered="Boolean(route.query.search)"
         :empty-title="
-          activeTab === 'requests'
-            ? 'Tidak ada permohonan hapus'
-            : 'Tempat sampah kosong'
+          activeTab === 'requests' ? 'Tidak ada permohonan hapus' : 'Tempat sampah kosong'
         "
         :empty-description="
           activeTab === 'requests'
@@ -291,10 +372,10 @@ function onForceDeleteDialogClose(open: boolean) {
                   class="moderation-page__property-link"
                   :to="{ name: 'pembanding.detail', params: { id: item.pembandingId } }"
                 >
-                  <strong>{{ item.alamat || ('Pembanding #' + item.pembandingId) }}</strong>
+                  <strong>{{ item.alamat || 'Pembanding #' + item.pembandingId }}</strong>
                 </RouterLink>
                 <span v-else class="moderation-page__property-link">
-                  <strong>{{ item.alamat || ('#' + item.id) }}</strong>
+                  <strong>{{ item.alamat || '#' + item.id }}</strong>
                 </span>
               </td>
               <td>
@@ -309,7 +390,9 @@ function onForceDeleteDialogClose(open: boolean) {
 
               <td
                 class="moderation-page__numeric"
-                :title="item.harga !== null ? formatCurrency(item.harga, { compact: false }) : undefined"
+                :title="
+                  item.harga !== null ? formatCurrency(item.harga, { compact: false }) : undefined
+                "
               >
                 {{ item.harga !== null ? formatCurrency(item.harga) : '—' }}
               </td>
@@ -375,7 +458,7 @@ function onForceDeleteDialogClose(open: boolean) {
                     variant="danger"
                     size="sm"
                     :disabled="forceDeleteMutation.isPending.value"
-                    @click="forceDeleteTarget = item"
+                    @click="openForceDeleteDialog(item)"
                   >
                     <template #icon><i class="pi pi-trash" aria-hidden="true" /></template>
                     Hapus Permanen
@@ -386,54 +469,171 @@ function onForceDeleteDialogClose(open: boolean) {
           </tbody>
         </table>
       </DataTableShell>
+
+      <!-- Pagination -->
+      <div v-if="meta && meta.last_page > 1" class="moderation-page__pagination">
+        <UiPagination
+          :page="meta.current_page"
+          :per-page="meta.per_page"
+          :total="meta.total"
+          @update:page="handlePageChange"
+        />
+      </div>
     </UiSurface>
 
-    <!-- Dialog Konfirmasi Setujui Permohonan -->
+    <!-- Dialog Konfirmasi Setujui Permohonan (MOD-1003 Target Summary) -->
     <UiConfirmDialog
       :open="Boolean(approveTarget)"
       title="Setujui permohonan hapus?"
-      :description="`Data &quot;${approveTarget?.alamat || ('#' + (approveTarget?.pembandingId || approveTarget?.id || ''))}&quot; akan disetujui untuk dihapus dan dipindahkan ke tempat sampah.`"
+      description="Data berikut akan disetujui untuk dihapus dan dipindahkan ke tempat sampah."
       confirm-label="Ya, setujui hapus"
       confirm-variant="primary"
       :busy="approveMutation.isPending.value"
       @update:open="onApproveDialogClose"
       @confirm="confirmApprove"
-    />
+    >
+      <div v-if="approveTarget" class="moderation-target-summary">
+        <div class="moderation-target-summary__row">
+          <span class="moderation-target-summary__label">Alamat Properti:</span>
+          <strong>{{
+            approveTarget.alamat ||
+            'Pembanding #' + (approveTarget.pembandingId || approveTarget.id)
+          }}</strong>
+        </div>
+        <div class="moderation-target-summary__row">
+          <span class="moderation-target-summary__label">Harga & Listing:</span>
+          <span>
+            {{ approveTarget.harga !== null ? formatCurrency(approveTarget.harga) : '—' }}
+            <span v-if="approveTarget.jenisListing">({{ approveTarget.jenisListing }})</span>
+          </span>
+        </div>
+        <div class="moderation-target-summary__row">
+          <span class="moderation-target-summary__label">Diajukan Oleh:</span>
+          <span>{{ approveTarget.requesterName || '-' }}</span>
+        </div>
+        <div class="moderation-target-summary__row">
+          <span class="moderation-target-summary__label">Alasan Hapus:</span>
+          <span class="moderation-target-summary__reason">{{ approveTarget.reason || '-' }}</span>
+        </div>
+      </div>
+    </UiConfirmDialog>
 
-    <!-- Dialog Tolak Permohonan Hapus -->
+    <!-- Dialog Tolak Permohonan Hapus (MOD-1004) -->
     <RejectDeleteRequestDialog
       :open="Boolean(rejectTarget)"
       :request-id="rejectTarget?.id ?? null"
-      :target-label="rejectTarget?.alamat || ('#' + (rejectTarget?.pembandingId || rejectTarget?.id || ''))"
+      :target-label="
+        rejectTarget?.alamat || '#' + (rejectTarget?.pembandingId || rejectTarget?.id || '')
+      "
       @update:open="onRejectDialogClose"
       @success="onRejectSuccess"
+      @conflict="onRejectConflict"
     />
 
-    <!-- Dialog Konfirmasi Pulihkan -->
+    <!-- Dialog Konfirmasi Pulihkan (MOD-1005) -->
     <UiConfirmDialog
       :open="Boolean(restoreTarget)"
       title="Pulihkan data pembanding?"
-      :description="`Data &quot;${restoreTarget?.alamat || ('#' + (restoreTarget?.pembandingId || restoreTarget?.id || ''))}&quot; akan dikembalikan ke daftar aktif pembanding.`"
+      description="Data berikut akan dikembalikan ke daftar aktif pembanding."
       confirm-label="Ya, pulihkan"
       confirm-variant="primary"
       :busy="restoreMutation.isPending.value"
       @update:open="onRestoreDialogClose"
       @confirm="confirmRestore"
-    />
+    >
+      <div v-if="restoreTarget" class="moderation-target-summary">
+        <div class="moderation-target-summary__row">
+          <span class="moderation-target-summary__label">Alamat Properti:</span>
+          <strong>{{
+            restoreTarget.alamat ||
+            'Pembanding #' + (restoreTarget.pembandingId || restoreTarget.id)
+          }}</strong>
+        </div>
+        <div class="moderation-target-summary__row">
+          <span class="moderation-target-summary__label">Harga & Listing:</span>
+          <span>
+            {{ restoreTarget.harga !== null ? formatCurrency(restoreTarget.harga) : '—' }}
+            <span v-if="restoreTarget.jenisListing">({{ restoreTarget.jenisListing }})</span>
+          </span>
+        </div>
+        <div v-if="restoreTarget.deletedAt" class="moderation-target-summary__row">
+          <span class="moderation-target-summary__label">Waktu Dihapus:</span>
+          <span
+            >{{ formatDate(restoreTarget.deletedAt) }}
+            {{ restoreTarget.requesterName ? 'oleh ' + restoreTarget.requesterName : '' }}</span
+          >
+        </div>
+      </div>
+    </UiConfirmDialog>
 
-    <!-- Dialog Konfirmasi Hapus Permanen -->
-    <UiConfirmDialog
+    <!-- Dialog Konfirmasi Hapus Permanen High-Friction (MOD-1006) -->
+    <UiDialog
       :open="Boolean(forceDeleteTarget)"
-      title="Hapus permanen data pembanding?"
-      :description="`Data &quot;${forceDeleteTarget?.alamat || ('#' + (forceDeleteTarget?.pembandingId || forceDeleteTarget?.id || ''))}&quot; akan dihapus secara permanen dari basis data dan tidak dapat dikembalikan lagi.`"
-      confirm-label="Ya, hapus permanen"
-      confirm-variant="danger"
-      :busy="forceDeleteMutation.isPending.value"
+      title="Hapus Permanen Data Pembanding"
+      description="Tindakan ini permanen dan tidak dapat dibatalkan."
+      width="sm"
+      :dismissable="!forceDeleteMutation.isPending.value"
       @update:open="onForceDeleteDialogClose"
-      @confirm="confirmForceDelete"
-    />
+    >
+      <div v-if="forceDeleteTarget" class="force-delete-dialog">
+        <UiInlineAlert tone="error" title="Peringatan Kritis" class="mb-3">
+          <p>
+            Data yang dihapus secara permanen akan dimusnahkan dari sistem dan tidak dapat
+            dipulihkan kembali melalui menu moderasi mana pun.
+          </p>
+        </UiInlineAlert>
 
+        <div class="moderation-target-summary">
+          <div class="moderation-target-summary__row">
+            <span class="moderation-target-summary__label">ID Pembanding:</span>
+            <strong>#{{ forceDeleteTarget.pembandingId || forceDeleteTarget.id }}</strong>
+          </div>
+          <div class="moderation-target-summary__row">
+            <span class="moderation-target-summary__label">Alamat:</span>
+            <span>{{ forceDeleteTarget.alamat || '-' }}</span>
+          </div>
+          <div class="moderation-target-summary__row">
+            <span class="moderation-target-summary__label">Nilai Harga:</span>
+            <span>{{
+              forceDeleteTarget.harga !== null ? formatCurrency(forceDeleteTarget.harga) : '—'
+            }}</span>
+          </div>
+        </div>
 
+        <label class="force-delete-confirm-label">
+          <input
+            v-model="forceDeleteConfirmed"
+            type="checkbox"
+            data-testid="force-delete-checkbox"
+            :disabled="forceDeleteMutation.isPending.value"
+          />
+          <span
+            >Saya mengonfirmasi bahwa data ini harus dihapus permanen dan tidak dapat dipulihkan
+            kembali.</span
+          >
+        </label>
+      </div>
+
+      <template #footer>
+        <UiButton
+          variant="secondary"
+          :disabled="forceDeleteMutation.isPending.value"
+          @click="forceDeleteTarget = null"
+        >
+          Batal
+        </UiButton>
+        <UiButton
+          variant="danger"
+          data-testid="confirm-force-delete-btn"
+          :disabled="!forceDeleteConfirmed || forceDeleteMutation.isPending.value"
+          :loading="forceDeleteMutation.isPending.value"
+          @click="confirmForceDelete"
+        >
+          <i class="pi pi-trash" aria-hidden="true" />
+          Hapus Permanen
+        </UiButton>
+      </template>
+    </UiDialog>
   </main>
 </template>
 
@@ -605,6 +805,68 @@ function onForceDeleteDialogClose(open: boolean) {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+}
+
+.moderation-page__pagination {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-soft);
+}
+
+/* Target Summary Box */
+.moderation-target-summary {
+  background: var(--color-surface-inset, #f8fafc);
+  border: 1px solid var(--color-border-soft, #e2e8f0);
+  border-radius: var(--radius-control, 8px);
+  padding: 12px 14px;
+  margin-block: 12px;
+  display: grid;
+  gap: 8px;
+  font-size: 0.8125rem;
+}
+
+.moderation-target-summary__row {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.moderation-target-summary__label {
+  color: var(--color-ink-muted, #64748b);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.moderation-target-summary__reason {
+  color: var(--color-ink-body, #334155);
+  font-style: italic;
+  max-width: 240px;
+  text-align: right;
+}
+
+/* Force Delete High Friction */
+.force-delete-dialog {
+  display: grid;
+  gap: 14px;
+}
+
+.force-delete-confirm-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-control, 8px);
+  font-size: 0.8125rem;
+  color: #991b1b;
+  cursor: pointer;
+}
+
+.force-delete-confirm-label input[type='checkbox'] {
+  margin-top: 3px;
+  accent-color: var(--color-danger, #dc2626);
 }
 
 @media (max-width: 767px) {
