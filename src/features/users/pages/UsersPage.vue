@@ -13,7 +13,12 @@ import UiStatusBadge from '@/shared/components/ui/UiStatusBadge.vue'
 import UiSurface from '@/shared/components/ui/UiSurface.vue'
 import { formatDate } from '@/shared/formatters'
 
-import type { CreateUserPayload, UpdateUserPayload, UserFilterParams, UserItem } from '../api/users.api'
+import type {
+  CreateUserPayload,
+  UpdateUserPayload,
+  UserFilterParams,
+  UserItem,
+} from '../api/users.api'
 import UserFormDialog from '../components/UserFormDialog.vue'
 import {
   useBulkDeleteUsersMutation,
@@ -264,11 +269,7 @@ function handlePageChange(newPage: number) {
           </p>
         </div>
         <div v-if="canCreate">
-          <UiButton
-            variant="primary"
-            data-testid="user-add-btn"
-            @click="openCreateDialog"
-          >
+          <UiButton variant="primary" data-testid="user-add-btn" @click="openCreateDialog">
             <template #icon><i class="pi pi-user-plus" aria-hidden="true" /></template>
             Tambah Pengguna
           </UiButton>
@@ -327,13 +328,7 @@ function handlePageChange(newPage: number) {
               <option value="inactive">Nonaktif</option>
             </select>
 
-            <UiButton
-              variant="secondary"
-              size="sm"
-              @click="updateFilters"
-            >
-              Terapkan
-            </UiButton>
+            <UiButton variant="secondary" size="sm" @click="updateFilters"> Terapkan </UiButton>
           </div>
         </div>
 
@@ -341,23 +336,16 @@ function handlePageChange(newPage: number) {
         <div v-if="selectedIds.length > 0" class="users-page__bulk-bar">
           <div class="users-page__bulk-info">
             <i class="pi pi-check-square" aria-hidden="true" />
-            <span><strong>{{ selectedIds.length }}</strong> pengguna terpilih</span>
+            <span
+              ><strong>{{ selectedIds.length }}</strong> pengguna terpilih</span
+            >
           </div>
           <div class="users-page__bulk-actions">
-            <UiButton
-              v-if="canDeleteAny"
-              variant="danger"
-              size="sm"
-              @click="confirmBulkDelete"
-            >
+            <UiButton v-if="canDeleteAny" variant="danger" size="sm" @click="confirmBulkDelete">
               <template #icon><i class="pi pi-trash" aria-hidden="true" /></template>
               Hapus Terpilih
             </UiButton>
-            <UiButton
-              variant="ghost"
-              size="sm"
-              @click="selectedIds = []"
-            >
+            <UiButton variant="ghost" size="sm" @click="selectedIds = []">
               Batalkan Pilihan
             </UiButton>
           </div>
@@ -381,7 +369,7 @@ function handlePageChange(newPage: number) {
           <table>
             <thead>
               <tr>
-                <th style="width: 44px;" class="text-center">
+                <th style="width: 44px" class="text-center">
                   <input
                     type="checkbox"
                     :checked="isAllSelected"
@@ -393,9 +381,9 @@ function handlePageChange(newPage: number) {
                 </th>
                 <th>Pengguna</th>
                 <th>Role & Hak Akses</th>
-                <th style="width: 140px;">Status</th>
-                <th style="width: 160px;">Terdaftar</th>
-                <th style="width: 110px;" class="text-right">Aksi</th>
+                <th style="width: 140px">Status</th>
+                <th style="width: 160px">Terdaftar</th>
+                <th style="width: 110px" class="text-right">Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -437,7 +425,15 @@ function handlePageChange(newPage: number) {
                       class="users-page__role-tag"
                       :class="`users-page__role-tag--${role}`"
                     >
-                      {{ role === 'super_admin' ? 'Super Admin' : role === 'pimpinan' ? 'Pimpinan' : role === 'data_contributor' ? 'Kontributor Data' : role }}
+                      {{
+                        role === 'super_admin'
+                          ? 'Super Admin'
+                          : role === 'pimpinan'
+                            ? 'Pimpinan'
+                            : role === 'data_contributor'
+                              ? 'Kontributor Data'
+                              : role
+                      }}
                     </span>
                   </div>
                 </td>
@@ -480,7 +476,11 @@ function handlePageChange(newPage: number) {
                       type="button"
                       class="users-page__action-btn users-page__action-btn--danger"
                       :disabled="Number(user.id) === Number(auth.user?.id)"
-                      :title="Number(user.id) === Number(auth.user?.id) ? 'Anda tidak dapat menghapus akun Anda sendiri' : 'Hapus pengguna'"
+                      :title="
+                        Number(user.id) === Number(auth.user?.id)
+                          ? 'Anda tidak dapat menghapus akun Anda sendiri'
+                          : 'Hapus pengguna'
+                      "
                       data-testid="user-delete-btn"
                       @click="confirmDelete(user)"
                     >
@@ -546,7 +546,8 @@ function handlePageChange(newPage: number) {
       @confirm="handleBulkDelete"
     >
       <p>
-        Apakah Anda yakin ingin menghapus <strong>{{ selectedIds.length }}</strong> akun pengguna terpilih sekaligus?
+        Apakah Anda yakin ingin menghapus <strong>{{ selectedIds.length }}</strong> akun pengguna
+        terpilih sekaligus?
       </p>
     </UiConfirmDialog>
   </div>

@@ -32,7 +32,13 @@ describe('UsersPage', () => {
               is_active: true,
               deactivated_at: null,
               roles: ['super_admin'],
-              permissions: ['view_any_user', 'create_user', 'update_user', 'delete_user', 'delete_any_user'],
+              permissions: [
+                'view_any_user',
+                'create_user',
+                'update_user',
+                'delete_user',
+                'delete_any_user',
+              ],
               created_at: '2026-01-01 10:00:00',
               updated_at: '2026-01-01 10:00:00',
             },
@@ -87,7 +93,8 @@ describe('UsersPage', () => {
         stubs: {
           UiDialog: {
             props: ['open', 'title'],
-            template: '<div v-if="open" class="dialog-mock"><h3>{{ title }}</h3><slot /><slot name="footer" /></div>',
+            template:
+              '<div v-if="open" class="dialog-mock"><h3>{{ title }}</h3><slot /><slot name="footer" /></div>',
           },
           UiConfirmDialog: {
             props: ['open', 'title'],

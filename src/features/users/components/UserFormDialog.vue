@@ -22,7 +22,9 @@ const emit = defineEmits<{
 }>()
 
 const isEdit = computed(() => Boolean(props.user))
-const dialogTitle = computed(() => (isEdit.value ? `Edit Pengguna: ${props.user?.name}` : 'Tambah Pengguna Baru'))
+const dialogTitle = computed(() =>
+  isEdit.value ? `Edit Pengguna: ${props.user?.name}` : 'Tambah Pengguna Baru',
+)
 
 interface FormState {
   name: string
@@ -66,7 +68,8 @@ watch(
         form.name = ''
         form.email = ''
         form.password = ''
-        form.roles = props.roleOptions.length > 0 && props.roleOptions[0] ? [props.roleOptions[0].value] : []
+        form.roles =
+          props.roleOptions.length > 0 && props.roleOptions[0] ? [props.roleOptions[0].value] : []
         form.is_active = true
       }
     }
@@ -152,27 +155,13 @@ function handleSubmit() {
 </script>
 
 <template>
-  <UiDialog
-    :open="open"
-    :title="dialogTitle"
-    width="md"
-    @update:open="emit('update:open', $event)"
-  >
+  <UiDialog :open="open" :title="dialogTitle" width="md" @update:open="emit('update:open', $event)">
     <form class="user-dialog__form" @submit.prevent="handleSubmit">
-      <UiInlineAlert
-        v-if="error"
-        tone="error"
-        title="Gagal menyimpan"
-        class="user-dialog__alert"
-      >
+      <UiInlineAlert v-if="error" tone="error" title="Gagal menyimpan" class="user-dialog__alert">
         <p>{{ error }}</p>
       </UiInlineAlert>
 
-      <UiField
-        label="Nama Lengkap"
-        required
-        :error="clientErrors.name"
-      >
+      <UiField label="Nama Lengkap" required :error="clientErrors.name">
         <input
           v-model="form.name"
           type="text"
@@ -182,11 +171,7 @@ function handleSubmit() {
         />
       </UiField>
 
-      <UiField
-        label="Alamat Email"
-        required
-        :error="clientErrors.email"
-      >
+      <UiField label="Alamat Email" required :error="clientErrors.email">
         <input
           v-model="form.email"
           type="email"
@@ -200,7 +185,11 @@ function handleSubmit() {
         :label="isEdit ? 'Kata Sandi Baru (Opsional)' : 'Kata Sandi'"
         :required="!isEdit"
         :error="clientErrors.password"
-        :help="isEdit ? 'Kosongkan jika tidak ingin mengubah kata sandi pengguna.' : 'Minimal 8 karakter.'"
+        :help="
+          isEdit
+            ? 'Kosongkan jika tidak ingin mengubah kata sandi pengguna.'
+            : 'Minimal 8 karakter.'
+        "
       >
         <input
           v-model="form.password"
@@ -248,7 +237,11 @@ function handleSubmit() {
           <span class="user-dialog__switch-slider" />
           <span class="user-dialog__switch-label">
             <strong>Status Akun Aktif</strong>
-            <small>{{ form.is_active ? 'Pengguna dapat masuk dan menggunakan sistem.' : 'Akun dinonaktifkan sementara.' }}</small>
+            <small>{{
+              form.is_active
+                ? 'Pengguna dapat masuk dan menggunakan sistem.'
+                : 'Akun dinonaktifkan sementara.'
+            }}</small>
           </span>
         </label>
       </div>
@@ -300,7 +293,9 @@ function handleSubmit() {
   color: var(--color-ink-strong);
   font-family: inherit;
   font-size: 0.875rem;
-  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+  transition:
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal);
 }
 
 .user-dialog__input:focus {
@@ -400,7 +395,7 @@ function handleSubmit() {
 }
 
 .user-dialog__switch-slider::before {
-  content: "";
+  content: '';
   position: absolute;
   height: 16px;
   width: 16px;
