@@ -29,8 +29,8 @@ export const useAuthStore = defineStore('auth', () => {
     queryClient.clear()
   }
 
-  async function initialize(): Promise<void> {
-    if (initialized.value) return
+  async function initialize(options: { force?: boolean } = {}): Promise<void> {
+    if (initialized.value && !options.force) return
     if (initializationRequest) return initializationRequest
 
     initializationRequest = (async () => {

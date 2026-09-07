@@ -46,7 +46,9 @@ function reloadApplication() {
         "
       >
         <strong>{{ capturedError.name }}: {{ capturedError.message }}</strong>
-        <pre style="margin-top: 8px; white-space: pre-wrap; word-break: break-all;">{{ capturedError.stack }}</pre>
+        <pre style="margin-top: 8px; white-space: pre-wrap; word-break: break-all">{{
+          capturedError.stack
+        }}</pre>
       </div>
       <button class="ui-button ui-button--primary" type="button" @click="reloadApplication">
         Muat ulang aplikasi
@@ -55,4 +57,3 @@ function reloadApplication() {
   </main>
   <slot v-else />
 </template>
-

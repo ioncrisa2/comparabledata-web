@@ -15,7 +15,11 @@ describe('GlobalSearchDialog', () => {
     history: createWebHistory(),
     routes: [
       { path: '/', name: 'dashboard', component: { template: '<div>Dashboard</div>' } },
-      { path: '/pembandings/:id', name: 'pembanding.detail', component: { template: '<div>Detail</div>' } },
+      {
+        path: '/pembandings/:id',
+        name: 'pembanding.detail',
+        component: { template: '<div>Detail</div>' },
+      },
     ],
   })
 

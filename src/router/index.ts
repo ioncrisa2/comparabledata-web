@@ -39,7 +39,6 @@ const router = createRouter({
         title: 'Data pembanding',
         layout: 'app',
         requiresAuth: true,
-        permissions: ['view_any_data::pembanding'],
         breadcrumb: 'Data pembanding',
       },
     },
@@ -58,8 +57,7 @@ const router = createRouter({
     {
       path: '/pembandings/submissions/:submissionId',
       name: 'pembanding.duplicate-review',
-      component: () =>
-        import('@/features/pembanding/pages/PembandingDuplicateReviewPage.vue'),
+      component: () => import('@/features/pembanding/pages/PembandingDuplicateReviewPage.vue'),
       meta: {
         title: 'Tinjau duplikat pembanding',
         layout: 'app',
@@ -86,7 +84,6 @@ const router = createRouter({
         title: 'Edit data pembanding',
         layout: 'app',
         requiresAuth: true,
-        permissions: ['update_data::pembanding'],
         breadcrumb: 'Edit pembanding',
       },
     },
@@ -98,11 +95,7 @@ const router = createRouter({
         title: 'Moderasi data',
         layout: 'app',
         requiresAuth: true,
-        permissions: [
-          'approve_delete_request',
-          'reject_delete_request',
-          'view_moderation',
-        ],
+        permissions: ['approve_delete_request', 'reject_delete_request', 'view_moderation'],
         permissionMode: 'any',
         breadcrumb: 'Moderasi data',
       },
@@ -115,11 +108,7 @@ const router = createRouter({
         title: 'Manajemen Master Data',
         layout: 'app',
         requiresAuth: true,
-        permissions: [
-          'view_master_data',
-          'create_master_data',
-          'update_master_data',
-        ],
+        permissions: ['view_master_data', 'create_master_data', 'update_master_data'],
         permissionMode: 'any',
         breadcrumb: 'Master Data',
       },
@@ -132,11 +121,7 @@ const router = createRouter({
         title: 'Manajemen Wilayah',
         layout: 'app',
         requiresAuth: true,
-        permissions: [
-          'view_geo_data',
-          'create_geo_data',
-          'update_geo_data',
-        ],
+        permissions: ['view_geo_data', 'create_geo_data', 'update_geo_data'],
         permissionMode: 'any',
         breadcrumb: 'Wilayah',
       },
@@ -149,11 +134,7 @@ const router = createRouter({
         title: 'Manajemen Pengguna',
         layout: 'app',
         requiresAuth: true,
-        permissions: [
-          'view_any_user',
-          'create_user',
-          'update_user',
-        ],
+        permissions: ['view_any_user', 'create_user', 'update_user'],
         permissionMode: 'any',
         breadcrumb: 'Pengguna',
       },
@@ -166,13 +147,141 @@ const router = createRouter({
         title: 'Manajemen Hak Akses',
         layout: 'app',
         requiresAuth: true,
-        permissions: [
-          'view_access_control',
-          'create_role',
-          'update_role',
-        ],
+        permissions: ['view_access_control', 'create_role', 'update_role'],
         permissionMode: 'any',
         breadcrumb: 'Hak Akses',
+      },
+    },
+    {
+      path: '/contributor-invitations',
+      name: 'contributor-invitation.index',
+      component: () =>
+        import('@/features/contributor-invitations/pages/ContributorInvitationsPage.vue'),
+      meta: {
+        title: 'Undangan & Registrasi Kontributor',
+        layout: 'app',
+        requiresAuth: true,
+        permissions: ['manage_data_contributor_invitations', 'view_any_user'],
+        permissionMode: 'any',
+        breadcrumb: 'Undangan Kontributor',
+      },
+    },
+    {
+      path: '/register-contributor/:token',
+      name: 'contributor.register',
+      component: () =>
+        import('@/features/contributor-invitations/pages/PublicContributorRegistrationPage.vue'),
+      meta: {
+        title: 'Registrasi Kontributor Data',
+        layout: 'auth',
+        requiresAuth: false,
+        breadcrumb: 'Registrasi Kontributor',
+      },
+    },
+    {
+      path: '/imports',
+      name: 'import.index',
+      component: () => import('@/features/bulk-import/pages/ImportBatchesPage.vue'),
+      meta: {
+        title: 'Impor Data Pembanding',
+        layout: 'app',
+        requiresAuth: true,
+        permissions: [
+          'create_data::pembanding',
+          'update_data::pembanding',
+          'view_any_data::pembanding',
+        ],
+        permissionMode: 'any',
+        breadcrumb: 'Impor Data',
+      },
+    },
+    {
+      path: '/imports/:id',
+      name: 'import.detail',
+      component: () => import('@/features/bulk-import/pages/ImportBatchDetailPage.vue'),
+      meta: {
+        title: 'Detail Batch Impor',
+        layout: 'app',
+        requiresAuth: true,
+        permissions: [
+          'create_data::pembanding',
+          'update_data::pembanding',
+          'view_any_data::pembanding',
+        ],
+        permissionMode: 'any',
+        breadcrumb: 'Detail Impor',
+      },
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: () => import('@/features/search/pages/SearchPage.vue'),
+      meta: {
+        title: 'Pencarian Global',
+        layout: 'app',
+        requiresAuth: true,
+        permissions: ['view_search'],
+        breadcrumb: 'Pencarian',
+      },
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('@/features/settings/pages/SettingsPage.vue'),
+      meta: {
+        title: 'Pengaturan Sistem',
+        layout: 'app',
+        requiresAuth: true,
+        permissions: ['view_settings', 'update_settings'],
+        permissionMode: 'any',
+        breadcrumb: 'Pengaturan Sistem',
+      },
+    },
+    {
+      path: '/activity-logs',
+      name: 'activity-log.index',
+      component: () => import('@/features/activity-logs/pages/ActivityLogsPage.vue'),
+      meta: {
+        title: 'Log Aktivitas Sistem',
+        layout: 'app',
+        requiresAuth: true,
+        permissions: ['view_activity_log', 'view_activity_logs', 'view_audit_trail'],
+        permissionMode: 'any',
+        breadcrumb: 'Log Aktivitas',
+      },
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('@/features/profile/pages/ProfilePage.vue'),
+      meta: {
+        title: 'Profil Pengguna',
+        layout: 'app',
+        requiresAuth: true,
+        breadcrumb: 'Profil Pengguna',
+      },
+    },
+    {
+      path: '/notifications',
+      name: 'notifications.index',
+      component: () => import('@/features/notifications/pages/NotificationsPage.vue'),
+      meta: {
+        title: 'Pusat Notifikasi',
+        layout: 'app',
+        requiresAuth: true,
+        breadcrumb: 'Notifikasi',
+      },
+    },
+    {
+      path: '/backup',
+      name: 'backup.index',
+      component: () => import('@/features/backup/pages/BackupPage.vue'),
+      meta: {
+        title: 'Cadangan & Pemulihan',
+        layout: 'app',
+        requiresAuth: true,
+        permissions: ['view_backup'],
+        breadcrumb: 'Cadangan & Pemulihan',
       },
     },
     {
@@ -241,6 +350,10 @@ router.beforeEach(async (to) => {
 
   const requiredPermissions = to.meta.permissions ?? []
   if (requiredPermissions.length > 0) {
+    if (auth.roles.includes('super_admin')) {
+      return true
+    }
+
     const allowed =
       to.meta.permissionMode === 'any'
         ? auth.canAny(requiredPermissions)
@@ -256,4 +369,5 @@ router.afterEach((to) => {
   document.title = to.meta.title ? `${to.meta.title} · ${env.VITE_APP_NAME}` : env.VITE_APP_NAME
 })
 
+export * from './routes'
 export default router

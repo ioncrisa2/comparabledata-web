@@ -170,4 +170,3 @@ export function formatPhoneInput(value: string | null | undefined): string {
   }
   return `+62 ${capped.slice(0, 3)} ${capped.slice(3, 7)} ${capped.slice(7)}`
 }
-

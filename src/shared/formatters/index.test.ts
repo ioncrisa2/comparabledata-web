@@ -9,7 +9,6 @@ import {
   formatPhoneInput,
 } from './index'
 
-
 describe('formatters', () => {
   it('formats localized domain values and preserves empty values', () => {
     expect(formatNumber(12500)).toContain('12.500')
@@ -85,4 +84,3 @@ describe('formatters', () => {
     expect(formatCurrency(450000000, { compact: false })).toContain('450.000.000')
   })
 })
-

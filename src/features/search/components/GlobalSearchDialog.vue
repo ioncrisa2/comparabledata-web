@@ -56,12 +56,29 @@ watch(isSearchOpen, (isOpen) => {
   }
 })
 
+function clearSearch() {
+  rawKeyword.value = ''
+  searchInput.value?.focus()
+}
+
 function selectResult(item: GlobalSearchResultItem) {
   const route = resolveSearchResultRoute(item)
   if (route) {
     closeSearch()
     void router.push(route)
   }
+}
+
+function goToFullSearch() {
+  const q = rawKeyword.value.trim()
+  closeSearch()
+  void router.push({
+    name: 'search',
+    query: {
+      ...(q ? { q } : {}),
+      ...(selectedGroup.value ? { menu_group: selectedGroup.value } : {}),
+    },
+  })
 }
 
 function handleKeydown(e: KeyboardEvent) {
@@ -75,8 +92,7 @@ function handleKeydown(e: KeyboardEvent) {
   } else if (e.key === 'ArrowUp') {
     e.preventDefault()
     if (results.value.length === 0) return
-    selectedIndex.value =
-      (selectedIndex.value - 1 + results.value.length) % results.value.length
+    selectedIndex.value = (selectedIndex.value - 1 + results.value.length) % results.value.length
     scrollToItem(selectedIndex.value)
   } else if (e.key === 'Enter') {
     e.preventDefault()
@@ -146,7 +162,7 @@ onUnmounted(() => {
           type="button"
           class="global-search__clear-btn"
           aria-label="Hapus kata kunci"
-          @click="rawKeyword = ''; searchInput?.focus()"
+          @click="clearSearch"
         >
           <i class="pi pi-times" aria-hidden="true" />
         </button>
@@ -175,11 +191,7 @@ onUnmounted(() => {
       </div>
 
       <!-- Error alert -->
-      <UiInlineAlert
-        v-if="isError"
-        tone="error"
-        title="Gagal mengambil hasil pencarian"
-      >
+      <UiInlineAlert v-if="isError" tone="error" title="Gagal mengambil hasil pencarian">
         <p>{{ error instanceof Error ? error.message : 'Terjadi kesalahan sistem.' }}</p>
       </UiInlineAlert>
 
@@ -189,7 +201,10 @@ onUnmounted(() => {
         <div v-if="!debouncedKeyword" class="global-search__placeholder">
           <i class="pi pi-compass" aria-hidden="true" />
           <p>Ketik kata kunci untuk mencari di seluruh sistem.</p>
-          <small>Mendukung pencarian alamat, kode wilayah, ID properti, dan referensi master data.</small>
+          <small
+            >Mendukung pencarian alamat, kode wilayah, ID properti, dan referensi master
+            data.</small
+          >
         </div>
 
         <!-- Loading indicator -->
@@ -201,7 +216,9 @@ onUnmounted(() => {
         <!-- Empty results -->
         <div v-else-if="results.length === 0" class="global-search__empty">
           <i class="pi pi-search-minus" aria-hidden="true" />
-          <p>Tidak ada data yang cocok dengan <strong>"{{ debouncedKeyword }}"</strong>.</p>
+          <p>
+            Tidak ada data yang cocok dengan <strong>"{{ debouncedKeyword }}"</strong>.
+          </p>
           <small>Coba gunakan kata kunci yang lebih umum atau periksa ejaan.</small>
         </div>
 
@@ -229,13 +246,18 @@ onUnmounted(() => {
               </div>
 
               <!-- Details snippet -->
-              <div v-if="item.details && Object.keys(item.details).length > 0" class="global-search__item-details">
+              <div
+                v-if="item.details && Object.keys(item.details).length > 0"
+                class="global-search__item-details"
+              >
                 <span
                   v-for="(val, key) in item.details"
                   :key="key"
                   class="global-search__item-detail-badge"
                 >
-                  <strong v-if="typeof key === 'string' && !['ID', '0', '1'].includes(key)">{{ key }}: </strong>
+                  <strong v-if="typeof key === 'string' && !['ID', '0', '1'].includes(key)"
+                    >{{ key }}:
+                  </strong>
                   {{ val }}
                 </span>
               </div>
@@ -246,17 +268,22 @@ onUnmounted(() => {
         </ul>
       </div>
 
-      <!-- Footer navigation hints -->
-      <div class="global-search__footer-hints">
-        <span class="global-search__hint">
-          <kbd>↑</kbd><kbd>↓</kbd> Navigasi
-        </span>
-        <span class="global-search__hint">
-          <kbd>↵</kbd> Pilih
-        </span>
-        <span class="global-search__hint">
-          <kbd>Esc</kbd> Tutup
-        </span>
+      <!-- Footer navigation hints and full search link -->
+      <div class="global-search__footer">
+        <div class="global-search__footer-hints">
+          <span class="global-search__hint"> <kbd>↑</kbd><kbd>↓</kbd> Navigasi </span>
+          <span class="global-search__hint"> <kbd>↵</kbd> Pilih </span>
+          <span class="global-search__hint"> <kbd>Esc</kbd> Tutup </span>
+        </div>
+        <button
+          type="button"
+          class="global-search__full-search-btn"
+          data-testid="global-search-full-page-btn"
+          @click="goToFullSearch"
+        >
+          <span>Halaman Pencarian Lengkap</span>
+          <i class="pi pi-external-link" aria-hidden="true" />
+        </button>
       </div>
     </div>
   </UiDialog>
@@ -275,7 +302,9 @@ onUnmounted(() => {
   border-radius: var(--radius-control);
   border: 1px solid var(--color-border-strong);
   background: var(--color-surface);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .global-search__input-wrapper:focus-within {
@@ -477,13 +506,41 @@ onUnmounted(() => {
   font-size: 0.875rem;
 }
 
+.global-search__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 6px;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
 .global-search__footer-hints {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding-top: 6px;
   font-size: 0.75rem;
   color: var(--color-ink-muted);
+}
+
+.global-search__full-search-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: none;
+  background: transparent;
+  color: var(--color-brand);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: var(--radius-control);
+  transition: background-color 0.15s ease;
+}
+
+.global-search__full-search-btn:hover {
+  background: var(--color-brand-subtle);
 }
 
 .global-search__hint kbd {
