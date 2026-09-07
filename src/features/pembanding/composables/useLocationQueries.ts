@@ -1,12 +1,7 @@
 import { useQuery } from '@tanstack/vue-query'
-import { computed, type MaybeRefOrGetter,toValue } from 'vue'
+import { computed, type MaybeRefOrGetter, toValue } from 'vue'
 
-import {
-  fetchDistricts,
-  fetchProvinces,
-  fetchRegencies,
-  fetchVillages,
-} from '../api/location.api'
+import { fetchDistricts, fetchProvinces, fetchRegencies, fetchVillages } from '../api/location.api'
 
 const LOCATION_STALE = 10 * 60_000 // 10 menit
 

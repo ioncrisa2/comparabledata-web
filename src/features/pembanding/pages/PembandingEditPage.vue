@@ -17,6 +17,7 @@ import PembandingFormStep2 from '../components/PembandingFormStep2.vue'
 import PembandingFormStep3 from '../components/PembandingFormStep3.vue'
 import PembandingFormStep4 from '../components/PembandingFormStep4.vue'
 import PembandingFormStepper from '../components/PembandingFormStepper.vue'
+import { usePembandingAccess } from '../composables/usePembandingAccess'
 import {
   extractFieldErrors,
   useUpdatePembandingMutation,
@@ -25,6 +26,7 @@ import {
   usePembandingDetailQuery,
   usePembandingFormOptionsQuery,
 } from '../composables/usePembandingQueries'
+import { findStepForError } from '../schemas/form.schema'
 import {
   emptyFormData,
   FORM_STEPS,
@@ -39,6 +41,7 @@ const id = computed(() => String(route.params.id ?? ''))
 const validId = computed(() => /^\d+$/.test(id.value))
 
 const detailQuery = usePembandingDetailQuery(id)
+const { canAccess } = usePembandingAccess(() => detailQuery.data.value)
 const optionsQuery = usePembandingFormOptionsQuery()
 const updateMutation = useUpdatePembandingMutation()
 
@@ -64,9 +67,7 @@ function onLeaveDialogClose(open: boolean) {
   if (!open) cancelLeave()
 }
 
-const isLoading = computed(
-  () => detailQuery.isPending.value || optionsQuery.isPending.value,
-)
+const isLoading = computed(() => detailQuery.isPending.value || optionsQuery.isPending.value)
 const isSubmitting = computed(() => updateMutation.isPending.value)
 const isLastStep = computed(() => currentStep.value === FORM_STEPS.length - 1)
 
@@ -74,7 +75,7 @@ const isLastStep = computed(() => currentStep.value === FORM_STEPS.length - 1)
 watch(
   () => detailQuery.data.value,
   (record) => {
-    if (!record || initialized.value) return
+    if (!record || !canAccess.value || initialized.value) return
     form.value = recordToFormData(record)
     initialSnapshot.value = JSON.stringify(form.value)
     initialized.value = true
@@ -132,11 +133,12 @@ function goToStep(step: number) {
   if (step <= currentStep.value) currentStep.value = step
 }
 
-async function submit() {
+function submit() {
+  if (!canAccess.value) return
   fieldErrors.value = {}
   const fd = toFormData(form.value)
 
-  await updateMutation.mutateAsync(
+  updateMutation.mutate(
     { id: id.value, formData: fd },
     {
       onSuccess: (record) => {
@@ -146,19 +148,9 @@ async function submit() {
       onError: (error) => {
         if (isApiError(error) && error.status === 422) {
           fieldErrors.value = extractFieldErrors(error)
-          const errorKeys = Object.keys(fieldErrors.value)
-          const stepMapping = [
-            ['jenis_listing_id', 'jenis_objek_id', 'tanggal_data', 'harga', 'jangka_waktu_sewa', 'satuan_waktu_sewa'],
-            ['province_id', 'regency_id', 'district_id', 'village_id', 'alamat_data', 'latitude', 'longitude'],
-            ['luas_tanah', 'luas_bangunan', 'lebar_depan', 'lebar_jalan', 'tahun_bangun', 'rasio_tapak', 'bentuk_tanah_id', 'posisi_tanah_id', 'kondisi_tanah_id', 'topografi_id', 'dokumen_tanah_id', 'peruntukan_id'],
-            ['nama_pemberi_informasi', 'nomer_telepon_pemberi_informasi', 'status_pemberi_informasi_id', 'image', 'catatan'],
-          ]
-          for (let i = 0; i < stepMapping.length; i++) {
-            const stepKeys = stepMapping[i]
-            if (stepKeys && errorKeys.some((k) => stepKeys.includes(k))) {
-              currentStep.value = i
-              break
-            }
+          const targetStep = findStepForError(fieldErrors.value)
+          if (targetStep !== null) {
+            currentStep.value = targetStep
           }
         }
       },
@@ -178,7 +170,7 @@ async function submit() {
           <i class="pi pi-arrow-left" aria-hidden="true" /> Kembali ke detail
         </RouterLink>
         <h1>Edit data pembanding</h1>
-        <p v-if="detailQuery.data.value">{{ detailQuery.data.value.alamat_data }}</p>
+        <p v-if="canAccess && detailQuery.data.value">{{ detailQuery.data.value.alamat_data }}</p>
       </div>
     </header>
 
@@ -216,6 +208,10 @@ async function submit() {
         <UiButton size="sm" @click="detailQuery.refetch()">Coba lagi</UiButton>
       </UiInlineAlert>
     </UiSurface>
+
+    <UiInlineAlert v-else-if="!canAccess" tone="warning" title="Anda tidak dapat mengedit data ini">
+      <p>Kontributor data hanya dapat mengedit data yang dibuat sendiri.</p>
+    </UiInlineAlert>
 
     <!-- Form -->
     <UiSurface v-else class="pembanding-edit__card">
@@ -277,12 +273,7 @@ async function submit() {
           <span class="pembanding-edit__step-count">
             Langkah {{ currentStep + 1 }} dari {{ FORM_STEPS.length }}
           </span>
-          <UiButton
-            v-if="!isLastStep"
-            variant="primary"
-            :disabled="isSubmitting"
-            @click="nextStep"
-          >
+          <UiButton v-if="!isLastStep" variant="primary" :disabled="isSubmitting" @click="nextStep">
             Selanjutnya
             <template #icon><i class="pi pi-arrow-right" aria-hidden="true" /></template>
           </UiButton>
@@ -400,6 +391,15 @@ async function submit() {
 
   .pembanding-edit__card {
     padding: 16px;
+  }
+
+  .pembanding-edit__actions {
+    flex-wrap: wrap;
+  }
+
+  .pembanding-edit__nav-right {
+    flex: 1 1 100%;
+    justify-content: space-between;
   }
 }
 </style>

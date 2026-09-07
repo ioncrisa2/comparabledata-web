@@ -2,6 +2,8 @@ import { apiClient } from '@/shared/api/client'
 import { ApiError } from '@/shared/api/error'
 import type { components, operations } from '@/shared/api/generated/schema'
 
+import { pembandingHistorySchema } from '../types/history'
+
 export type Pembanding = components['schemas']['PembandingResource']
 export type PembandingDeleteRequest = components['schemas']['PembandingDeleteRequest']
 export type PembandingListResponse =
@@ -113,4 +115,14 @@ export async function requestDeletePembanding(
 
   if (data?.data) return data.data
   throw invalidResponse('permintaan hapus')
+}
+
+export async function fetchPembandingHistory(id: string, signal?: AbortSignal) {
+  const { data } = await apiClient.GET('/v1/pembandings/{id}/history', {
+    params: { path: { id } },
+    signal,
+  })
+  const parsed = pembandingHistorySchema.safeParse(data?.data)
+  if (parsed.success) return parsed.data
+  throw invalidResponse('riwayat perubahan pembanding')
 }

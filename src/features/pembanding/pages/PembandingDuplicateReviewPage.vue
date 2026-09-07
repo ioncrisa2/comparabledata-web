@@ -71,7 +71,10 @@ const strategyLabel = computed(() =>
         <i class="pi pi-arrow-left" aria-hidden="true" /> Kembali ke daftar
       </RouterLink>
       <h1>Tinjau data duplikat</h1>
-      <p>Data yang Anda masukkan terindikasi mirip dengan data yang sudah ada. Pilih tindakan yang sesuai.</p>
+      <p>
+        Data yang Anda masukkan terindikasi mirip dengan data yang sudah ada. Pilih tindakan yang
+        sesuai.
+      </p>
     </header>
 
     <!-- Sukses -->
@@ -166,7 +169,10 @@ const strategyLabel = computed(() =>
               <span>
                 <strong>#{{ candidate.id }}</strong> — Dibuat oleh {{ candidate.created_by }}
               </span>
-              <span v-if="candidate.deleted" class="duplicate-review__badge duplicate-review__badge--deleted">
+              <span
+                v-if="candidate.deleted"
+                class="duplicate-review__badge duplicate-review__badge--deleted"
+              >
                 Terhapus
               </span>
             </span>
@@ -180,7 +186,11 @@ const strategyLabel = computed(() =>
               class="duplicate-review__image"
             />
             <dl class="duplicate-review__details">
-              <div v-for="row in candidate.rows" :key="row.key" class="duplicate-review__detail-row">
+              <div
+                v-for="row in candidate.rows"
+                :key="row.key"
+                class="duplicate-review__detail-row"
+              >
                 <dt>{{ row.label }}</dt>
                 <dd>{{ row.value }}</dd>
               </div>

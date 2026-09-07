@@ -15,10 +15,7 @@ function invalidResponse(resource: string): ApiError {
   })
 }
 
-export async function fetchProvinces(
-  q?: string,
-  signal?: AbortSignal,
-): Promise<Province[]> {
+export async function fetchProvinces(q?: string, signal?: AbortSignal): Promise<Province[]> {
   const { data } = await apiClient.GET('/v1/locations/provinces', {
     params: { query: { q, limit: 100 } },
     signal,

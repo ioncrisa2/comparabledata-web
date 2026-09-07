@@ -3,12 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 import { mockServer } from '@/test/mocks/server'
 
-import {
-  fetchDistricts,
-  fetchProvinces,
-  fetchRegencies,
-  fetchVillages,
-} from './location.api'
+import { fetchDistricts, fetchProvinces, fetchRegencies, fetchVillages } from './location.api'
 
 describe('pembanding location API', () => {
   it('fetches provinces', async () => {

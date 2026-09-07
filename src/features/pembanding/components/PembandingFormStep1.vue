@@ -21,8 +21,9 @@ function update<K extends keyof PembandingFormData>(key: K, value: PembandingFor
 
 /** Saat jenis listing berubah, reset sewa fields jika bukan sewa */
 function onJenisListingChange(id: string) {
-  const isSewa = props.options?.jenisListings.find((o) => String(o.value) === id)?.label
-    .toLowerCase()
+  const isSewa = props.options?.jenisListings
+    .find((o) => String(o.value) === id)
+    ?.label.toLowerCase()
     .includes('sewa')
   const patch: Partial<PembandingFormData> = { jenis_listing_id: id }
   if (!isSewa) {
@@ -59,11 +60,7 @@ const isSewa = () => {
             @change="onJenisListingChange(($event.target as HTMLSelectElement).value)"
           >
             <option value="" disabled>Pilih jenis listing</option>
-            <option
-              v-for="opt in options?.jenisListings"
-              :key="opt.value"
-              :value="opt.value"
-            >
+            <option v-for="opt in options?.jenisListings" :key="opt.value" :value="opt.value">
               {{ opt.label }}
             </option>
           </select>
@@ -81,11 +78,7 @@ const isSewa = () => {
             @change="update('jenis_objek_id', ($event.target as HTMLSelectElement).value)"
           >
             <option value="" disabled>Pilih jenis objek</option>
-            <option
-              v-for="opt in options?.jenisObjeks"
-              :key="opt.value"
-              :value="opt.value"
-            >
+            <option v-for="opt in options?.jenisObjeks" :key="opt.value" :value="opt.value">
               {{ opt.label }}
             </option>
           </select>
@@ -106,7 +99,12 @@ const isSewa = () => {
         </template>
       </UiField>
 
-      <UiField label="Harga" required :error="errors.harga" help="Masukkan angka tanpa titik atau koma">
+      <UiField
+        label="Harga"
+        required
+        :error="errors.harga"
+        help="Masukkan angka tanpa titik atau koma"
+      >
         <template #default="{ inputId, describedBy, invalid }">
           <input
             :id="inputId"
@@ -152,7 +150,12 @@ const isSewa = () => {
               :aria-invalid="invalid"
               :value="modelValue.satuan_waktu_sewa"
               :disabled="disabled"
-              @change="update('satuan_waktu_sewa', ($event.target as HTMLSelectElement).value as 'Bulan' | 'Tahun' | '')"
+              @change="
+                update(
+                  'satuan_waktu_sewa',
+                  ($event.target as HTMLSelectElement).value as 'Bulan' | 'Tahun' | '',
+                )
+              "
             >
               <option value="">Pilih satuan</option>
               <option value="Bulan">Bulan</option>

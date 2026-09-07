@@ -38,10 +38,10 @@ function validate(): boolean {
   return true
 }
 
-async function submit() {
+function submit() {
   if (!validate()) return
 
-  await mutation.mutateAsync(
+  mutation.mutate(
     { id: props.pembandingId, reason: reason.value.trim() },
     {
       onSuccess: () => {
@@ -73,8 +73,8 @@ function close() {
   >
     <div class="delete-dialog">
       <p class="delete-dialog__info">
-        Data tidak akan langsung dihapus. Permintaan ini akan ditinjau oleh admin sebelum data
-        dapat dihapus (misal jika ada aset yang sama atau terinput ganda).
+        Data tidak akan langsung dihapus. Permintaan ini akan ditinjau oleh admin sebelum data dapat
+        dihapus (misal jika ada aset yang sama atau terinput ganda).
       </p>
 
       <UiField
@@ -96,11 +96,7 @@ function close() {
         </template>
       </UiField>
 
-      <UiInlineAlert
-        v-if="mutation.isError.value"
-        tone="error"
-        title="Permintaan gagal dikirim"
-      >
+      <UiInlineAlert v-if="mutation.isError.value" tone="error" title="Permintaan gagal dikirim">
         <p>
           {{
             isApiError(mutation.error.value)

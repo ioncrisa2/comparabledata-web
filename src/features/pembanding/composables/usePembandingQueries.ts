@@ -1,10 +1,11 @@
 import { keepPreviousData, useQuery } from '@tanstack/vue-query'
-import { computed, type MaybeRefOrGetter,toValue } from 'vue'
+import { computed, type MaybeRefOrGetter, toValue } from 'vue'
 
 import {
   fetchPembanding,
   fetchPembandingCreators,
   fetchPembandingFormOptions,
+  fetchPembandingHistory,
   fetchPembandings,
 } from '../api/pembanding.api'
 import { pembandingKeys } from '../api/pembanding.keys'
@@ -49,5 +50,14 @@ export function usePembandingCreatorsQuery() {
     queryKey: pembandingKeys.creators(),
     queryFn: ({ signal }) => fetchPembandingCreators(signal),
     staleTime: 5 * 60_000,
+  })
+}
+
+export function usePembandingHistoryQuery(id: MaybeRefOrGetter<string>) {
+  return useQuery({
+    queryKey: computed(() => pembandingKeys.history(toValue(id))),
+    queryFn: ({ signal }) => fetchPembandingHistory(toValue(id), signal),
+    enabled: computed(() => /^\d+$/.test(toValue(id))),
+    staleTime: 0,
   })
 }

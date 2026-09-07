@@ -135,10 +135,7 @@ export async function downloadExportFile(
   const defaultFilename = `data-pembanding-${dateStr}${extensionMap[format] || ''}`
 
   const contentDisposition = response.response?.headers.get('content-disposition')
-  const filename = extractFilenameFromContentDisposition(
-    contentDisposition,
-    defaultFilename,
-  )
+  const filename = extractFilenameFromContentDisposition(contentDisposition, defaultFilename)
 
   const blob = response.data as unknown as Blob
   if (!blob) {
@@ -147,4 +144,169 @@ export async function downloadExportFile(
 
   triggerBlobDownload(blob, filename)
   return { filename, blob }
+}
+
+export type ExportPreviewData =
+  operations['export.preview']['responses'][200]['content']['application/json']['data']
+
+export type ExportRunItem =
+  operations['export.runStatus']['responses'][200]['content']['application/json']['data']
+
+export type ExportRunsResponse =
+  operations['export.runs']['responses'][200]['content']['application/json']
+
+export type ExportRunsQueryParams = NonNullable<operations['export.runs']['parameters']['query']>
+
+export function buildExportRequestBody(options: DownloadExportOptions) {
+  const format = options.format
+  const mode = format === 'pdf' ? (options.mode ?? 'summary') : undefined
+  const profile = options.profile ?? 'ringkas'
+  const scope = options.scope ?? (options.ids?.length ? 'selected' : 'filtered')
+
+  const payload: Record<string, unknown> = {
+    format,
+    mode,
+    profile,
+    scope,
+    dataset: options.dataset ?? 'all',
+  }
+
+  if (options.ids && options.ids.length > 0) {
+    payload.ids = options.ids.join(',')
+  }
+
+  if (options.columns && options.columns.length > 0) {
+    payload.columns = options.columns
+  }
+
+  if (options.filters) {
+    const f = options.filters
+    if (f.province_id) payload.province_id = f.province_id
+    if (f.regency_id) payload.regency_id = f.regency_id
+    if (f.district_id) payload.district_id = f.district_id
+    if (f.village_id) payload.village_id = f.village_id
+    if (f.jenis_listing_id) payload.jenis_listing_id = f.jenis_listing_id
+    if (f.jenis_objek_id) payload.jenis_objek_id = f.jenis_objek_id
+    if (f.created_by) payload.created_by = f.created_by
+    if (f.dari_tanggal) payload.dari_tanggal = f.dari_tanggal
+    if (f.sampai_tanggal) payload.sampai_tanggal = f.sampai_tanggal
+    if (f.q) payload.q = f.q
+  }
+
+  return payload
+}
+
+export async function previewExport(
+  options: DownloadExportOptions,
+  signal?: AbortSignal,
+): Promise<ExportPreviewData> {
+  const body = buildExportRequestBody(options)
+  const { data } = await apiClient.POST('/v1/exports/preview', {
+    body: body as never,
+    signal,
+  })
+
+  if (data && data.data) return data.data
+  throw invalidResponse('preview ekspor')
+}
+
+export async function fetchExportRuns(
+  params?: ExportRunsQueryParams,
+  signal?: AbortSignal,
+): Promise<ExportRunsResponse> {
+  const { data } = await apiClient.GET('/v1/exports/runs', {
+    params: {
+      query: params,
+    },
+    signal,
+  })
+
+  if (data && data.data) return data
+  throw invalidResponse('riwayat tugas ekspor')
+}
+
+export async function createExportRun(
+  options: DownloadExportOptions,
+  signal?: AbortSignal,
+): Promise<ExportRunItem> {
+  const body = buildExportRequestBody(options)
+  const { data } = await apiClient.POST('/v1/exports/runs', {
+    body: body as never,
+    signal,
+  })
+
+  if (data && data.data) return data.data
+  throw invalidResponse('tugas ekspor baru')
+}
+
+export async function fetchExportRunStatus(
+  exportRunId: number,
+  signal?: AbortSignal,
+): Promise<ExportRunItem> {
+  const { data } = await apiClient.GET('/v1/exports/runs/{exportRun}', {
+    params: {
+      path: {
+        exportRun: exportRunId,
+      },
+    },
+    signal,
+  })
+
+  if (data && data.data) return data.data
+  throw invalidResponse('status tugas ekspor')
+}
+
+export async function downloadExportRunFile(
+  exportRunId: number,
+  fallbackFormat: ExportFormat = 'excel',
+  signal?: AbortSignal,
+): Promise<{ filename: string; blob: Blob }> {
+  const response = await apiClient.GET('/v1/exports/runs/{exportRun}/download', {
+    params: {
+      path: {
+        exportRun: exportRunId,
+      },
+    },
+    parseAs: 'blob',
+    signal,
+  })
+
+  const extensionMap: Record<ExportFormat, string> = {
+    excel: '.xlsx',
+    pdf: '.pdf',
+    csv: '.csv',
+    geojson: '.geojson',
+    kml: '.kml',
+  }
+  const defaultFilename = `export-run-${exportRunId}${extensionMap[fallbackFormat] || '.bin'}`
+  const contentDisposition = response.response?.headers.get('content-disposition')
+  const filename = extractFilenameFromContentDisposition(contentDisposition, defaultFilename)
+
+  const blob = response.data as unknown as Blob
+  if (!blob) {
+    throw invalidResponse('file hasil ekspor')
+  }
+
+  triggerBlobDownload(blob, filename)
+  return { filename, blob }
+}
+
+export async function retryExportRun(
+  exportRunId: number,
+  options?: DownloadExportOptions,
+  signal?: AbortSignal,
+): Promise<ExportRunItem> {
+  const body = options ? buildExportRequestBody(options) : {}
+  const { data } = await apiClient.POST('/v1/exports/runs/{exportRun}/retry', {
+    params: {
+      path: {
+        exportRun: exportRunId,
+      },
+    },
+    body: body as never,
+    signal,
+  })
+
+  if (data && data.data) return data.data
+  throw invalidResponse('jadwal ulang ekspor')
 }

@@ -89,12 +89,7 @@ function removeFilter(key: string) {
           <span>Jumlah data</span>
           <strong>{{ formatNumber(meta?.total) }}</strong>
         </div>
-        <UiButton
-          v-if="canExport"
-          variant="secondary"
-          size="sm"
-          @click="isExportDialogOpen = true"
-        >
+        <UiButton v-if="canExport" variant="secondary" size="sm" @click="isExportDialogOpen = true">
           <template #icon><i class="pi pi-download" aria-hidden="true" /></template>
           Ekspor
         </UiButton>

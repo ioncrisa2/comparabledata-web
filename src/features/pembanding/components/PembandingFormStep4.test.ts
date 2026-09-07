@@ -149,4 +149,34 @@ describe('PembandingFormStep4 - Phone Input', () => {
 
     expect(wrapper.vm.form.nomer_telepon_pemberi_informasi).toBe('')
   })
+
+  it('allows removing a selected image', async () => {
+    const fakeFile = new File(['dummy content'], 'test.png', { type: 'image/png' })
+    const Harness = defineComponent({
+      components: { PembandingFormStep4 },
+      setup() {
+        const form = ref<PembandingFormData>({
+          ...emptyFormData(),
+          image: fakeFile,
+        })
+        return { form }
+      },
+      template: `
+        <PembandingFormStep4
+          v-model="form"
+          :options="undefined"
+          :errors="{}"
+        />
+      `,
+    })
+
+    const wrapper = mount(Harness)
+    expect(wrapper.find('.form-step__preview').exists()).toBe(true)
+
+    const removeBtn = wrapper.find('.form-step__remove-btn')
+    expect(removeBtn.exists()).toBe(true)
+    await removeBtn.trigger('click')
+
+    expect(wrapper.vm.form.image).toBeNull()
+  })
 })

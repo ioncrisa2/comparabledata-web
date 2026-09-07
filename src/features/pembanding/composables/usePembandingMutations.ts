@@ -31,6 +31,7 @@ export function useUpdatePembandingMutation() {
     onSuccess: (updatedRecord) => {
       const id = String(updatedRecord.id)
       queryClient.setQueryData(pembandingKeys.detail(id), updatedRecord)
+      void queryClient.invalidateQueries({ queryKey: pembandingKeys.history(id) })
       void queryClient.invalidateQueries({ queryKey: pembandingKeys.lists() })
     },
   })
@@ -63,10 +64,8 @@ export function useRequestDeleteMutation() {
  */
 export function extractFieldErrors(error: unknown): Record<string, string> {
   if (!isApiError(error)) return {}
-  const raw = (error as { errors?: Record<string, string[]> }).errors
-  if (!raw || typeof raw !== 'object') return {}
   const result: Record<string, string> = {}
-  for (const [key, messages] of Object.entries(raw)) {
+  for (const [key, messages] of Object.entries(error.fieldErrors)) {
     if (Array.isArray(messages) && messages.length > 0 && typeof messages[0] === 'string') {
       result[key] = messages[0]
     }

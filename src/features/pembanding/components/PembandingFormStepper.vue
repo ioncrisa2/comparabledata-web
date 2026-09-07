@@ -93,7 +93,8 @@ const steps = FORM_STEPS
   color: var(--color-ink-muted);
   font-size: 0.75rem;
   font-weight: 700;
-  transition: border-color var(--duration-fast) var(--ease-out),
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
     background-color var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out);
 }

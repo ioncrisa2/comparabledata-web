@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import UiField from '@/shared/components/ui/UiField.vue'
 import UiInlineAlert from '@/shared/components/ui/UiInlineAlert.vue'
@@ -69,7 +69,6 @@ function onPhoneInput(event: Event) {
     }
   }
 
-
   input.setSelectionRange(targetPos, targetPos)
 }
 
@@ -83,7 +82,9 @@ function onPhoneKeydown(event: KeyboardEvent) {
       !digits ||
       digits === '62' ||
       digits === '0' ||
-      (digits.length === 3 && digits.startsWith('62') && input.selectionStart === input.value.length)
+      (digits.length === 3 &&
+        digits.startsWith('62') &&
+        input.selectionStart === input.value.length)
     ) {
       event.preventDefault()
       input.value = ''
@@ -101,14 +102,33 @@ function onPhoneBlur() {
 
 const imageError = ref('')
 const previewUrl = ref<string | null>(null)
+const fileInputRef = ref<HTMLInputElement | null>(null)
 
+watch(
+  () => props.modelValue.image,
+  (file, _, onCleanup) => {
+    const url = file ? URL.createObjectURL(file) : null
+    previewUrl.value = url
+    onCleanup(() => {
+      if (url) URL.revokeObjectURL(url)
+    })
+  },
+  { immediate: true },
+)
+
+function removeSelectedImage() {
+  update('image', null)
+  imageError.value = ''
+  if (fileInputRef.value) {
+    fileInputRef.value.value = ''
+  }
+}
 
 function onFileChange(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0] ?? null
   imageError.value = ''
 
   if (!file) {
-    previewUrl.value = null
     update('image', null)
     return
   }
@@ -123,7 +143,6 @@ function onFileChange(event: Event) {
     return
   }
 
-  previewUrl.value = URL.createObjectURL(file)
   update('image', file)
 }
 </script>
@@ -159,14 +178,12 @@ function onFileChange(event: Event) {
             :aria-invalid="invalid"
             :value="modelValue.status_pemberi_informasi_id"
             :disabled="disabled || !options"
-            @change="update('status_pemberi_informasi_id', ($event.target as HTMLSelectElement).value)"
+            @change="
+              update('status_pemberi_informasi_id', ($event.target as HTMLSelectElement).value)
+            "
           >
             <option value="">Pilih status</option>
-            <option
-              v-for="opt in options?.statusPemberiInfos"
-              :key="opt.value"
-              :value="opt.value"
-            >
+            <option v-for="opt in options?.statusPemberiInfos" :key="opt.value" :value="opt.value">
               {{ opt.label }}
             </option>
           </select>
@@ -193,7 +210,6 @@ function onFileChange(event: Event) {
           />
         </template>
       </UiField>
-
     </div>
 
     <h3 class="form-step__section-title">Foto properti</h3>
@@ -204,7 +220,17 @@ function onFileChange(event: Event) {
       </div>
       <div v-else-if="previewUrl" class="form-step__preview">
         <img :src="previewUrl" alt="Pratinjau foto baru" />
-        <small>Pratinjau foto baru</small>
+        <div class="form-step__preview-meta">
+          <small>Pratinjau foto baru</small>
+          <button
+            type="button"
+            class="form-step__remove-btn"
+            aria-label="Hapus foto yang dipilih"
+            @click="removeSelectedImage"
+          >
+            <i class="pi pi-trash" aria-hidden="true" /> Hapus foto
+          </button>
+        </div>
       </div>
 
       <UiField
@@ -216,6 +242,11 @@ function onFileChange(event: Event) {
         <template #default="{ inputId, describedBy, invalid }">
           <input
             :id="inputId"
+            :ref="
+              (el) => {
+                fileInputRef = el as HTMLInputElement
+              }
+            "
             type="file"
             accept="image/jpeg,image/png,image/webp,image/gif"
             :aria-describedby="describedBy"
@@ -299,6 +330,31 @@ function onFileChange(event: Event) {
 .form-step__preview small {
   color: var(--color-ink-muted);
   font-size: 0.75rem;
+}
+
+.form-step__preview-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 320px;
+}
+
+.form-step__remove-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: var(--color-danger);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-control);
+}
+
+.form-step__remove-btn:hover {
+  background: #fef2f2;
 }
 
 textarea {

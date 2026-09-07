@@ -2,7 +2,6 @@
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { useAuthStore } from '@/features/auth'
 import { isApiError } from '@/shared/api/error'
 import UiButton from '@/shared/components/ui/UiButton.vue'
 import UiEmptyState from '@/shared/components/ui/UiEmptyState.vue'
@@ -13,11 +12,12 @@ import UiSurface from '@/shared/components/ui/UiSurface.vue'
 import { formatCurrency, formatDate, formatNumber, formatPhone } from '@/shared/formatters'
 
 import PembandingDeleteRequestDialog from '../components/PembandingDeleteRequestDialog.vue'
+import PembandingHistoryPanel from '../components/PembandingHistoryPanel.vue'
 import PembandingImage from '../components/PembandingImage.vue'
+import { usePembandingAccess } from '../composables/usePembandingAccess'
 import { usePembandingDetailQuery } from '../composables/usePembandingQueries'
 
 const route = useRoute()
-const auth = useAuthStore()
 const id = computed(() => String(route.params.id ?? ''))
 const validId = computed(() => /^\d+$/.test(id.value))
 const detailQuery = usePembandingDetailQuery(id)
@@ -40,7 +40,8 @@ const mapUrl = computed(() => {
 })
 
 // Permission flags
-const canEdit = computed(() => auth.can('update_data::pembanding'))
+const { canAccess } = usePembandingAccess(record)
+const historyOpen = ref(false)
 
 // Dialog state
 const deleteRequestOpen = ref(false)
@@ -111,7 +112,15 @@ function measurement(value: string | number | null | undefined, unit: string): s
       </UiInlineAlert>
     </UiSurface>
 
-    <template v-else-if="record">
+    <UiInlineAlert
+      v-else-if="record && !canAccess"
+      tone="warning"
+      title="Anda tidak dapat membuka data ini"
+    >
+      <p>Kontributor data hanya dapat melihat dan mengedit data yang dibuat sendiri.</p>
+    </UiInlineAlert>
+
+    <template v-else-if="record && canAccess">
       <!-- Notifikasi request hapus berhasil -->
       <UiInlineAlert
         v-if="deleteRequestSuccess"
@@ -119,7 +128,10 @@ function measurement(value: string | number | null | undefined, unit: string): s
         tone="success"
         title="Permintaan hapus terkirim"
       >
-        <p>Permintaan akan ditinjau oleh moderator. Data masih tersedia sampai moderator memproses permintaan.</p>
+        <p>
+          Permintaan akan ditinjau oleh moderator. Data masih tersedia sampai moderator memproses
+          permintaan.
+        </p>
       </UiInlineAlert>
 
       <header class="pembanding-detail__heading">
@@ -142,8 +154,17 @@ function measurement(value: string | number | null | undefined, unit: string): s
             <small v-if="record.sewa_periode_label">{{ record.sewa_periode_label }}</small>
           </div>
           <div class="pembanding-detail__actions">
+            <button
+              type="button"
+              class="pembanding-detail__btn"
+              :aria-expanded="historyOpen"
+              aria-controls="pembanding-history"
+              @click="historyOpen = !historyOpen"
+            >
+              <i class="pi pi-history" aria-hidden="true" /> Historis
+            </button>
             <RouterLink
-              v-if="canEdit"
+              v-if="canAccess"
               class="pembanding-detail__btn pembanding-detail__btn--edit"
               :to="{ name: 'pembanding.edit', params: { id } }"
             >
@@ -170,6 +191,8 @@ function measurement(value: string | number | null | undefined, unit: string): s
         :pembanding-label="record.alamat_data"
         @success="deleteRequestSuccess = true"
       />
+
+      <PembandingHistoryPanel v-if="historyOpen" :pembanding-id="id" />
 
       <div class="pembanding-detail__layout">
         <div class="pembanding-detail__main">
@@ -448,8 +471,8 @@ function measurement(value: string | number | null | undefined, unit: string): s
 }
 
 .pembanding-detail__btn--delete {
-  border-color: #FECACA;
-  background: #FEF2F2;
+  border-color: #fecaca;
+  background: #fef2f2;
   color: var(--color-danger);
   box-shadow: 0 1px 2px rgba(220, 38, 38, 0.05);
 }
@@ -459,15 +482,15 @@ function measurement(value: string | number | null | undefined, unit: string): s
 }
 
 .pembanding-detail__btn--delete:hover {
-  border-color: #F87171;
-  background: #FEE2E2;
-  color: #B91C1C;
+  border-color: #f87171;
+  background: #fee2e2;
+  color: #b91c1c;
   box-shadow: 0 1px 3px rgba(220, 38, 38, 0.15);
 }
 
 .pembanding-detail__btn--delete:active {
-  background: #FECACA;
-  color: #991B1B;
+  background: #fecaca;
+  color: #991b1b;
 }
 
 .pembanding-detail__delete-success {

@@ -19,7 +19,8 @@ import {
   useCreatePembandingMutation,
 } from '../composables/usePembandingMutations'
 import { usePembandingFormOptionsQuery } from '../composables/usePembandingQueries'
-import { emptyFormData, FORM_STEPS, type FormErrors,toFormData } from '../types/form'
+import { findStepForError } from '../schemas/form.schema'
+import { emptyFormData, FORM_STEPS, type FormErrors, toFormData } from '../types/form'
 
 const router = useRouter()
 const optionsQuery = usePembandingFormOptionsQuery()
@@ -73,13 +74,13 @@ function goToStep(step: number) {
   }
 }
 
-async function submit() {
+function submit() {
   fieldErrors.value = {}
   duplicateInfo.value = null
 
   const fd = toFormData(form.value)
 
-  await createMutation.mutateAsync(fd, {
+  createMutation.mutate(fd, {
     onSuccess: (record) => {
       isSubmitted.value = true
       void router.push({ name: 'pembanding.detail', params: { id: record.id } })
@@ -93,20 +94,9 @@ async function submit() {
         }
         if (error.status === 422) {
           fieldErrors.value = extractFieldErrors(error)
-          // Navigasi ke step pertama yang punya error
-          const errorKeys = Object.keys(fieldErrors.value)
-          const stepMapping = [
-            ['jenis_listing_id', 'jenis_objek_id', 'tanggal_data', 'harga', 'jangka_waktu_sewa', 'satuan_waktu_sewa'],
-            ['province_id', 'regency_id', 'district_id', 'village_id', 'alamat_data', 'latitude', 'longitude'],
-            ['luas_tanah', 'luas_bangunan', 'lebar_depan', 'lebar_jalan', 'tahun_bangun', 'rasio_tapak', 'bentuk_tanah_id', 'posisi_tanah_id', 'kondisi_tanah_id', 'topografi_id', 'dokumen_tanah_id', 'peruntukan_id'],
-            ['nama_pemberi_informasi', 'nomer_telepon_pemberi_informasi', 'status_pemberi_informasi_id', 'image', 'catatan'],
-          ]
-          for (let i = 0; i < stepMapping.length; i++) {
-            const stepKeys = stepMapping[i]
-            if (stepKeys && errorKeys.some((k) => stepKeys.includes(k))) {
-              currentStep.value = i
-              break
-            }
+          const targetStep = findStepForError(fieldErrors.value)
+          if (targetStep !== null) {
+            currentStep.value = targetStep
           }
         }
       }
@@ -145,8 +135,8 @@ function goToDuplicateReview() {
       title="Data terindikasi duplikat"
     >
       <p>
-        Data yang Anda masukkan mirip dengan data yang sudah ada. Silakan tinjau data duplikat
-        dan tentukan tindakan yang sesuai.
+        Data yang Anda masukkan mirip dengan data yang sudah ada. Silakan tinjau data duplikat dan
+        tentukan tindakan yang sesuai.
       </p>
       <UiButton variant="primary" size="sm" @click="goToDuplicateReview">
         Tinjau data duplikat
@@ -154,10 +144,7 @@ function goToDuplicateReview() {
     </UiInlineAlert>
 
     <UiSurface class="pembanding-create__card">
-      <PembandingFormStepper
-        :current-step="currentStep"
-        @go-to="goToStep"
-      />
+      <PembandingFormStepper :current-step="currentStep" @go-to="goToStep" />
 
       <div class="pembanding-create__form-body">
         <!-- Step 1: Dasar -->
@@ -212,11 +199,7 @@ function goToDuplicateReview() {
       </div>
 
       <footer class="pembanding-create__actions">
-        <UiButton
-          v-if="currentStep > 0"
-          :disabled="isSubmitting"
-          @click="prevStep"
-        >
+        <UiButton v-if="currentStep > 0" :disabled="isSubmitting" @click="prevStep">
           <template #icon><i class="pi pi-arrow-left" aria-hidden="true" /></template>
           Sebelumnya
         </UiButton>
@@ -226,12 +209,7 @@ function goToDuplicateReview() {
           <span class="pembanding-create__step-count">
             Langkah {{ currentStep + 1 }} dari {{ FORM_STEPS.length }}
           </span>
-          <UiButton
-            v-if="!isLastStep"
-            variant="primary"
-            :disabled="isSubmitting"
-            @click="nextStep"
-          >
+          <UiButton v-if="!isLastStep" variant="primary" :disabled="isSubmitting" @click="nextStep">
             Selanjutnya
             <template #icon><i class="pi pi-arrow-right" aria-hidden="true" /></template>
           </UiButton>
@@ -348,6 +326,15 @@ function goToDuplicateReview() {
 
   .pembanding-create__card {
     padding: 16px;
+  }
+
+  .pembanding-create__actions {
+    flex-wrap: wrap;
+  }
+
+  .pembanding-create__nav-right {
+    flex: 1 1 100%;
+    justify-content: space-between;
   }
 }
 </style>

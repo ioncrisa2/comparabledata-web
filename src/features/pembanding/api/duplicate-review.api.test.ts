@@ -3,10 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 import { mockServer } from '@/test/mocks/server'
 
-import {
-  fetchDuplicateReview,
-  resolveDuplicateReview,
-} from './duplicate-review.api'
+import { fetchDuplicateReview, resolveDuplicateReview } from './duplicate-review.api'
 
 describe('duplicate review API', () => {
   it('fetches duplicate review submission details', async () => {
@@ -47,17 +44,14 @@ describe('duplicate review API', () => {
   it('resolves duplicate review with chosen strategy', async () => {
     let resolutionBody: Record<string, unknown> | null = null
     mockServer.use(
-      http.post(
-        '*/api/v1/pembanding-submissions/sub-1/resolution',
-        async ({ request }) => {
-          resolutionBody = (await request.json()) as Record<string, unknown>
-          return HttpResponse.json({
-            status: 'success',
-            message: 'Record lama berhasil diperbarui.',
-            data: {} as never,
-          })
-        },
-      ),
+      http.post('*/api/v1/pembanding-submissions/sub-1/resolution', async ({ request }) => {
+        resolutionBody = (await request.json()) as Record<string, unknown>
+        return HttpResponse.json({
+          status: 'success',
+          message: 'Record lama berhasil diperbarui.',
+          data: {} as never,
+        })
+      }),
     )
 
     await resolveDuplicateReview('sub-1', 'replace_existing', 42)

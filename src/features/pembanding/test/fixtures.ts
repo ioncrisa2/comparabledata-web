@@ -1,4 +1,6 @@
-import type { Pembanding } from '../api/pembanding.api'
+import type { components } from '../../../shared/api/generated/schema.js'
+
+type Pembanding = components['schemas']['PembandingResource']
 
 export function createPembanding(overrides: Partial<Pembanding> = {}): Pembanding {
   const relation = (id: number, slug: string, name: string) => ({ id, slug, name })

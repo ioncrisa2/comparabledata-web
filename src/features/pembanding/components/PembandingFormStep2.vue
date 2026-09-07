@@ -33,7 +33,13 @@ const villagesQuery = useVillagesQuery(() => props.modelValue.district_id)
 // Reset child saat parent berubah
 watch(
   () => props.modelValue.province_id,
-  () => emit('update:modelValue', { ...props.modelValue, regency_id: '', district_id: '', village_id: '' }),
+  () =>
+    emit('update:modelValue', {
+      ...props.modelValue,
+      regency_id: '',
+      district_id: '',
+      village_id: '',
+    }),
 )
 watch(
   () => props.modelValue.regency_id,
@@ -48,7 +54,8 @@ watch(
 <template>
   <div class="form-step">
     <p class="form-step__intro">
-      Pilih wilayah administratif dari provinsi hingga desa/kelurahan, lalu isi alamat dan koordinat GPS.
+      Pilih wilayah administratif dari provinsi hingga desa/kelurahan, lalu isi alamat dan koordinat
+      GPS.
     </p>
 
     <div class="form-step__grid">
@@ -65,11 +72,7 @@ watch(
             <option value="" disabled>
               {{ provincesQuery.isPending.value ? 'Memuat…' : 'Pilih provinsi' }}
             </option>
-            <option
-              v-for="prov in provincesQuery.data.value"
-              :key="prov.id"
-              :value="prov.id"
-            >
+            <option v-for="prov in provincesQuery.data.value" :key="prov.id" :value="prov.id">
               {{ prov.name }}
             </option>
           </select>
@@ -91,11 +94,7 @@ watch(
               <template v-else-if="regenciesQuery.isPending.value">Memuat…</template>
               <template v-else>Pilih kabupaten/kota</template>
             </option>
-            <option
-              v-for="reg in regenciesQuery.data.value"
-              :key="reg.id"
-              :value="reg.id"
-            >
+            <option v-for="reg in regenciesQuery.data.value" :key="reg.id" :value="reg.id">
               {{ reg.name }}
             </option>
           </select>
@@ -117,11 +116,7 @@ watch(
               <template v-else-if="districtsQuery.isPending.value">Memuat…</template>
               <template v-else>Pilih kecamatan</template>
             </option>
-            <option
-              v-for="dist in districtsQuery.data.value"
-              :key="dist.id"
-              :value="dist.id"
-            >
+            <option v-for="dist in districtsQuery.data.value" :key="dist.id" :value="dist.id">
               {{ dist.name }}
             </option>
           </select>
@@ -143,11 +138,7 @@ watch(
               <template v-else-if="villagesQuery.isPending.value">Memuat…</template>
               <template v-else>Pilih desa/kelurahan</template>
             </option>
-            <option
-              v-for="vill in villagesQuery.data.value"
-              :key="vill.id"
-              :value="vill.id"
-            >
+            <option v-for="vill in villagesQuery.data.value" :key="vill.id" :value="vill.id">
               {{ vill.name }}
             </option>
           </select>
@@ -157,12 +148,7 @@ watch(
 
     <h3 class="form-step__section-title">Alamat dan koordinat</h3>
     <div class="form-step__grid">
-      <UiField
-        label="Alamat lengkap"
-        required
-        :error="errors.alamat_data"
-        class="form-step__full"
-      >
+      <UiField label="Alamat lengkap" required :error="errors.alamat_data" class="form-step__full">
         <template #default="{ inputId, describedBy, invalid }">
           <input
             :id="inputId"
