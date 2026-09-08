@@ -146,6 +146,7 @@ const hasAccessGroup = computed(() =>
     'create_role',
     'update_role',
     'manage_data_contributor_invitations',
+    'manage_integrations',
   ]),
 )
 
@@ -339,6 +340,16 @@ async function handleLogout() {
           >
             <i class="pi pi-user-plus" aria-hidden="true" />
             <span class="app-layout__nav-text">Undangan Kontributor</span>
+          </RouterLink>
+          <RouterLink
+            v-if="auth.canAny(['manage_integrations'])"
+            :to="{ name: 'integrations.index' }"
+            class="app-layout__nav-link"
+            :class="{ 'app-layout__nav-active': route.name === 'integrations.index' }"
+            :title="isSidebarCollapsed ? 'Integrasi aplikasi' : undefined"
+          >
+            <i class="pi pi-key" aria-hidden="true" />
+            <span class="app-layout__nav-text">Integrasi aplikasi</span>
           </RouterLink>
         </div>
 

@@ -48,11 +48,15 @@ const authenticatedFetch: typeof fetch = async (input, init) => {
   }
 }
 
-export const apiClient = createClient<paths>({
-  baseUrl: `${env.VITE_API_BASE_URL}/api`,
-  fetch: authenticatedFetch,
-  headers: {
-    Accept: 'application/json',
-    'X-Requested-With': 'XMLHttpRequest',
-  },
-})
+export function createApiClient<Paths extends object>() {
+  return createClient<Paths>({
+    baseUrl: `${env.VITE_API_BASE_URL}/api`,
+    fetch: authenticatedFetch,
+    headers: {
+      Accept: 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+  })
+}
+
+export const apiClient = createApiClient<paths>()

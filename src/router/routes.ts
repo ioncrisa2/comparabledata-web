@@ -15,6 +15,7 @@ export const ROUTE_NAMES = {
   CONTRIBUTOR_REGISTER: 'contributor.register',
   IMPORT_INDEX: 'import.index',
   IMPORT_DETAIL: 'import.detail',
+  INTEGRATIONS: 'integrations.index',
   SETTINGS: 'settings',
   ACTIVITY_LOGS: 'activity-log.index',
   SEARCH: 'search',

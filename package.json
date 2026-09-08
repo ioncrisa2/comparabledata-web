@@ -12,6 +12,7 @@
     "format:check": "prettier --check .",
     "api:probe": "node scripts/check-api-readiness.mjs",
     "api:generate": "node scripts/generate-api.mjs",
+    "api:generate:integrations": "node scripts/generate-integrations-api.mjs",
     "api:check": "node scripts/check-generated-api.mjs",
     "test": "vitest run",
     "test:watch": "vitest",

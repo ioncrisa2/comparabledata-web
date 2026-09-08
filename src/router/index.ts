@@ -153,6 +153,18 @@ const router = createRouter({
       },
     },
     {
+      path: '/integrations',
+      name: 'integrations.index',
+      component: () => import('@/features/integrations/pages/IntegrationsPage.vue'),
+      meta: {
+        title: 'Integrasi aplikasi',
+        layout: 'app',
+        requiresAuth: true,
+        permissions: ['manage_integrations'],
+        breadcrumb: 'Integrasi aplikasi',
+      },
+    },
+    {
       path: '/contributor-invitations',
       name: 'contributor-invitation.index',
       component: () =>
